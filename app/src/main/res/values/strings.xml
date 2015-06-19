@@ -1,0 +1,53 @@
+<resources>
+    <string name="app_name">APlayer</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+
+    <string name="title_activity_shared">SharedActivity</string>
+    <string name="title_activity_music_details">MusicDetailsActivity</string>
+    <string name="title_activity_search">SearchActivity</string>
+    <string name="name_service_music_player_activity">com.iced.alexwang.player.MusicPlayerService</string>
+
+    <string name="intent_data_shared_operation">IntentDataSharedOperations</string>
+    <string name="intent_data_show_playlist">IntentDataShowPlaylist</string>
+    <string name="intent_data_playlist_data">IntentDataPlaylistData</string>
+
+    <!-- search activity -->
+    <string name="search_data_item">SearchItem</string>
+    <string name="search_data_item_title">SearchItemTitle</string>
+    <string name="search_data_item_artist">SearchItemArtist</string>
+    <string name="search_data_content">SearchContent</string>
+
+    <!-- details activity -->
+    <string name="detailed_data_music_path">DetailedDataMusicPath</string>
+
+    <!-- music player service -->
+    <string name="player_service_operation">PlayerServiceOperation</string>
+    <string name="player_service_op_start">PlayerServiceOpStart</string>
+    <string name="player_service_data_start_index">PlayerServiceDataStartIndex</string>
+    <string name="player_service_op_stop">PlayerServiceStop</string>
+    <string name="player_service_op_toggle">PlayerServiceOpToggle</string>
+    <string name="player_service_op_next">PlayerServiceOpNext</string>
+    <string name="player_service_op_last">PlayerServiceOpLast</string>
+    <string name="player_service_op_set_playlist">PlayerServiceOpSetPlaylist</string>
+    <string name="player_service_data_playlist">PlaylistServiceDataPlaylist</string>
+    <string name="player_service_op_set_volume">PlayerServiceSetVolume</string>
+    <string name="player_service_op_get_volume">PlayerServiceGetVolume</string>
+    <string name="player_service_data_volume">PlayerServiceDataVolume</string>
+    <string name="player_service_op_seek_to">PlayerServiceOpSeekTo</string>
+    <string name="player_service_data_seek_to">PlayerServiceDataSeekTo</string>
+    <string name="player_service_op_get_current_pos">PlayerServiceOpGetCurrentPos</string>
+    <string name="player_service_data_current_pos">PlayerServiceDataCurrentPos</string>
+    <string name="player_service_op_toggle_loop">PlayerServiceOpToggleLoop</string>
+    <string name="player_service_intent_call_back">PlayerServiceIntentCallBack</string>
+    <string name="title_activity_select_file">SelectFileActivity</string>
+
+    <!-- Select File Activity -->
+    <string name="select_file_initial_directory">SelectFileInitialDirectory</string>
+    <string name="select_file_supported_files">((mp3)|(m4a)|(wav)|(flac)|(ape)|(aac))</string>
+
+</resources>
