@@ -12,73 +12,28 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ListView;
 import android.widget.Toast;
 
-import com.iced.alexwang.libs.CachedFile;
-import com.iced.alexwang.libs.CachedFileSystem;
-import com.iced.alexwang.models.Playlist;
-import com.iced.alexwang.models.callbacks.ParameterizedRunnable;
 import com.iced.alexwang.models.callbacks.PositionCallback;
 import com.iced.alexwang.models.callbacks.VolumeCallback;
 import com.iced.alexwang.player.MusicPlayerHelper;
-import com.iced.alexwang.views.playlist.PlaylistAdapter;
-import com.iced.alexwang.views.playlist.PlaylistViewHelper;
 
-import java.io.File;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class StartupActivity extends Activity {
-
-    Button btnShowDialog, btnAddView, btnStartActivity, btnToast, btnPlayer;
-    ViewGroup layout;
-    ListView leftDrawer;
-
-    Playlist playlist;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_startup);
 
-        playlist = PlaylistViewHelper.initPlaylistItems(this);
+        playerHelper = MusicPlayerHelper.getInstance(this);
+
         layout = (ViewGroup) findViewById(R.id.layoutStartup);
 
-        leftDrawer = (ListView) findViewById(R.id.left_drawer);
-        leftDrawer.setAdapter(new PlaylistAdapter(this, playlist));
-
-        btnShowDialog = (Button) findViewById(R.id.btnShowDialog);
-        btnShowDialog.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                PlaylistViewHelper.showPlaylistDialog(StartupActivity.this, playlist);
-            }
-        });
-
-        btnAddView = (Button) findViewById(R.id.btnAddView);
-        btnAddView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                PlaylistViewHelper helper = new PlaylistViewHelper(layout);
-                helper.addPlaylistView(playlist);
-            }
-        });
-
-        btnStartActivity = (Button) findViewById(R.id.btnStartActivity);
-        btnStartActivity.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                PlaylistViewHelper.startPlaylistActivity(getApplicationContext(), playlist);
-            }
-        });
-
-        btnToast = (Button) findViewById(R.id.btnPlaylistToast);
-//        btnToast.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                PlaylistViewHelper.showPlaylistToast(StartupActivity.this, playlist);
-//            }
-//        });
-        btnToast.setOnClickListener(new View.OnClickListener() {
+        btnSelectFiles = (Button) findViewById(R.id.btnShowFileSelect);
+        btnSelectFiles.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(StartupActivity.this, SelectFileActivity.class);
@@ -87,6 +42,16 @@ public class StartupActivity extends Activity {
                 startActivity(intent);
             }
         });
+
+        btnPlaylist = (Button) findViewById(R.id.btnShowPlaylist);
+        btnPlaylist.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(StartupActivity.this, CurrentPlaylistActivity.class);
+                startActivity(intent);
+            }
+        });
+
         btnPlayer = (Button) findViewById(R.id.btnPlayer);
         btnPlayer.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -98,37 +63,35 @@ public class StartupActivity extends Activity {
                 builder.setItems(items, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        MusicPlayerHelper helper = MusicPlayerHelper.getInstance(StartupActivity.this);
                         switch(which) {
                             case 0:
-                                helper.addPlaylist(playlist);
                                 break;
                             case 1:
-                                helper.play();
+                                playerHelper.play();
                                 break;
                             case 2:
-                                helper.stop();
+                                playerHelper.stop();
                                 break;
                             case 3:
-                                helper.toggle();
+                                playerHelper.toggle();
                                 break;
                             case 4:
-                                helper.last();
+                                playerHelper.last();
                                 break;
                             case 5:
-                                helper.next();
+                                playerHelper.next();
                                 break;
                             case 6:
-                                helper.volumeUp();
+                                playerHelper.volumeUp();
                                 break;
                             case 7:
-                                helper.volumeDown();
+                                playerHelper.volumeDown();
                                 break;
                             case 8:
-                                helper.toggleLoop();
+                                playerHelper.toggleLoop();
                                 break;
                             case 9:
-                                helper.getVolume(new VolumeCallback() {
+                                playerHelper.getVolume(new VolumeCallback() {
                                     @Override
                                     public void run(float volume) {
                                         Toast.makeText(getApplicationContext(), String.valueOf(volume), Toast.LENGTH_SHORT).show();
@@ -136,7 +99,7 @@ public class StartupActivity extends Activity {
                                 });
                                 break;
                             case 10:
-                                helper.getPosition(new PositionCallback() {
+                                playerHelper.getPosition(new PositionCallback() {
                                     @Override
                                     public void run(int position) {
                                         Toast.makeText(getApplicationContext(), String.valueOf(position), Toast.LENGTH_SHORT).show();
@@ -148,7 +111,6 @@ public class StartupActivity extends Activity {
                 }).show();
             }
         });
-
     }
 
     @Override
@@ -161,11 +123,16 @@ public class StartupActivity extends Activity {
         // Handle presses on the action bar items
         switch (item.getItemId()) {
             case R.id.action_show_playlist:
-                PlaylistViewHelper.showPlaylistDialog(this, playlist);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
+
+
+    Button btnPlayer, btnPlaylist, btnSelectFiles;
+    ViewGroup layout;
+
+    MusicPlayerHelper playerHelper;
 
 }

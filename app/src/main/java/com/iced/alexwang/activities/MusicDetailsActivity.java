@@ -1,24 +1,58 @@
 package com.iced.alexwang.activities;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.iced.alexwang.activities.R;
+import com.iced.alexwang.libs.MusicMetadataHelper;
 
 public class MusicDetailsActivity extends Activity {
 
-    TextView tv;
+    TextView textTitle, textArtist, textBitrate, textAlbum, textPlaylist;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_music_details);
-
-        tv = (TextView) findViewById(R.id.textMusicPath);
         String path = getIntent().getExtras().getString(getString(R.string.detailed_data_music_path));
-        tv.setText(path);
+
+        textTitle = (TextView) findViewById(R.id.textMusicDetailsTitle);
+        textAlbum = (TextView) findViewById(R.id.textMusicDetailsAlbum);
+        textArtist = (TextView) findViewById(R.id.textMusicDetailsArtist);
+        textBitrate = (TextView) findViewById(R.id.textMusicDetailsBitrate);
+        textPlaylist = (TextView) findViewById(R.id.textMusicDetaisPlaylist);
+
+        final MusicMetadataHelper metaHelper = MusicMetadataHelper.create(path);
+        if(metaHelper != null) {
+            textTitle.setText(metaHelper.getTitle());
+            textArtist.setText(metaHelper.getArtist());
+            textBitrate.setText(String.valueOf((int)(metaHelper.getBitrate() / 1000.0)) + "Kbps");
+            textAlbum.setText(metaHelper.getAlbum());
+
+            textPlaylist.setText(metaHelper.getPlaylist());
+            textPlaylist.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    String path = metaHelper.getPlaylistPath();
+                    if (path.length() != 0) {
+                        Intent intent = new Intent(MusicDetailsActivity.this, SelectFileActivity.class);
+                        intent.putExtra(getString(R.string.select_file_initial_directory), path);
+                        startActivity(intent);
+                    }
+                }
+            });
+
+
+        } else {
+            Toast.makeText(this, getString(R.string.file_not_found_error), Toast.LENGTH_SHORT).show();
+        }
+
     }
 
     @Override

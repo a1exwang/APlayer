@@ -1,0 +1,7 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.iced.alexwang.activities.CurrentPlaylistActivity">
+    <item android:id="@+id/playlist_sort_by_artist" android:title="By Artist" />
+    <item android:id="@+id/playlist_sort_by_title" android:title="By Title" />
+    <item android:id="@+id/playlist_sort_by_date" android:title="By Date" />
+</menu>

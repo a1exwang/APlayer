@@ -35,7 +35,7 @@ public class Playlist extends ArrayList<Song> implements Serializable, Parcelabl
         if (size() != 0) {
             current--;
             if(current <= 0)
-                current = 0;
+                current = size() - 1;
             return get(current);
         }
         return null;

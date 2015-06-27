@@ -16,32 +16,21 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Dialog"
-            android:id="@+id/btnShowDialog"/>
+            android:text="Select Files"
+            android:id="@+id/btnShowFileSelect" />
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Add View"
-            android:id="@+id/btnAddView"/>
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Start Activity"
-            android:id="@+id/btnStartActivity" />
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Toast"
-            android:id="@+id/btnPlaylistToast" />
+            android:text="Playlist"
+            android:id="@+id/btnShowPlaylist" />
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Player"
             android:id="@+id/btnPlayer" />
+
     </LinearLayout>
     <!-- The navigation drawer -->
     <ListView android:id="@+id/left_drawer"

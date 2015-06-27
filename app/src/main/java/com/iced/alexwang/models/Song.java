@@ -3,9 +3,13 @@ package com.iced.alexwang.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.iced.alexwang.libs.CachedFile;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by alexwang on 15-6-14.
@@ -77,6 +81,16 @@ public class Song extends Item implements Parcelable, Serializable {
         this.artist = artist;
         this.path = path;
     }
+    public static Song createFromCachedFile(CachedFile file) {
+        Matcher matcher = Pattern.compile(patternArtistTitle).matcher(file.getName());
+        if (matcher.matches()) {
+            return new Song(matcher.group(2), new Artist(matcher.group(1)), file.getAbsolutePath());
+        } else {
+            return null;
+        }
+    }
+
+    static final String patternArtistTitle = "^(.*)-(.*)\\.[A-Za-z0-9]+";
 
     public String getTitle() {
         return title;

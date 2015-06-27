@@ -43,11 +43,25 @@
     <string name="player_service_op_get_current_pos">PlayerServiceOpGetCurrentPos</string>
     <string name="player_service_data_current_pos">PlayerServiceDataCurrentPos</string>
     <string name="player_service_op_toggle_loop">PlayerServiceOpToggleLoop</string>
-    <string name="player_service_intent_call_back">PlayerServiceIntentCallBack</string>
+    <string name="player_service_op_get_playlist">PlayerServiceOpGetPlaylist</string>
+    <string name="player_service_intent_call_back">com.iced.alexwang.aplayer.MusicPlayerCallbackBroadcast</string>
     <string name="title_activity_select_file">SelectFileActivity</string>
 
     <!-- Select File Activity -->
     <string name="select_file_initial_directory">SelectFileInitialDirectory</string>
-    <string name="select_file_supported_files">((mp3)|(m4a)|(wav)|(flac)|(ape)|(aac))</string>
+    <string name="select_file_supported_files">.*\.((mp3)|(m4a)|(wav)|(flac)|(ape)|(aac))</string>
+
+    <!-- menu -->
+    <string name="sort_by_title">Sort By Title</string>
+    <string name="sort_by_date">Sort By Date</string>
+    <string name="sort_by_artist">Sort By Artist</string>
+    <string name="sort_by_file_name">Sort By File Name</string>
+    <string name="title_activity_current_playlist">CurrentPlaylistActivity</string>
+
+    <!-- cached files -->
+    <string name="cached_file_system_scheme_data">cache_scheme.bin</string>
+
+    <!-- User message -->
+    <string name="file_not_found_error">Cannot The File!</string>
 
 </resources>

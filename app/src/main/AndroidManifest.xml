@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.iced.alexwang.activities" >
 
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -17,10 +17,6 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-        <activity
-            android:name=".SharedActivity"
-            android:label="@string/title_activity_shared" >
         </activity>
         <activity
             android:name=".SearchActivity"
@@ -40,6 +36,18 @@
             android:name=".SelectFileActivity"
             android:label="@string/title_activity_select_file" >
         </activity>
+        <activity
+            android:name=".CurrentPlaylistActivity"
+            android:label="@string/title_activity_current_playlist" >
+        </activity>
+
+        <receiver
+            android:name="com.iced.alexwang.player.PlayerBroadcastReceiver"
+            android:enabled="true" >
+            <intent-filter>
+                <action android:name="com.iced.alexwang.aplayer.MusicPlayerCallbackBroadcast" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

@@ -10,6 +10,7 @@ import android.widget.Toast;
 import com.iced.alexwang.activities.R;
 import com.iced.alexwang.models.callbacks.ParameterizedRunnable;
 import com.iced.alexwang.models.Playlist;
+import com.iced.alexwang.models.callbacks.PlaylistCallback;
 import com.iced.alexwang.models.callbacks.PositionCallback;
 import com.iced.alexwang.models.callbacks.VolumeCallback;
 
@@ -17,8 +18,12 @@ import java.util.ArrayList;
 
 public class MusicPlayerHelper {
 
+    private MusicPlayerHelper(Context c) {
+        context = c;
+    }
+    private static MusicPlayerHelper theInstance;
     public static MusicPlayerHelper getInstance(Context c) {
-        if (theInstance == null) {
+        if(theInstance == null) {
             theInstance = new MusicPlayerHelper(c);
             return theInstance;
         } else {
@@ -26,14 +31,8 @@ public class MusicPlayerHelper {
             return theInstance;
         }
     }
-    private static MusicPlayerHelper theInstance;
 
-    private MusicPlayerHelper(Context c) {
-        context = c;
-        setupHandlers();
-    }
-
-    public void addPlaylist(Playlist playlist) {
+    public void setPlaylist(Playlist playlist) {
         Intent intent = new Intent(context, MusicPlayerService.class);
         intent.putExtra(context.getString(R.string.player_service_operation), context.getString(R.string.player_service_op_set_playlist));
         intent.putExtra(context.getString(R.string.player_service_data_playlist), (Parcelable)playlist);
@@ -88,16 +87,15 @@ public class MusicPlayerHelper {
     }
 
     public void getVolume(final VolumeCallback callback) {
-        final float[] vol = new float[1];
-        callbackHandler = new ParameterizedRunnable() {
+        PlayerBroadcastReceiver.register(new ParameterizedRunnable() {
             @Override
             public Object run(Object obj) {
                 Intent intent = (Intent) ((Object[])obj)[1];
-                vol[0] = intent.getFloatExtra(context.getString(R.string.player_service_data_volume), 0);
-                callback.run(vol[0]);
+                float vol = intent.getFloatExtra(context.getString(R.string.player_service_data_volume), 0);
+                callback.run(vol);
                 return null;
             }
-        };
+        });
 
         Intent intent = new Intent(context, MusicPlayerService.class);
         intent.putExtra(context.getString(R.string.player_service_operation), context.getString(R.string.player_service_op_get_volume));
@@ -105,40 +103,35 @@ public class MusicPlayerHelper {
     }
     public void getPosition(final PositionCallback callback) {
 
-        final int[] pos = new int[1];
-        callbackHandler = new ParameterizedRunnable() {
+        PlayerBroadcastReceiver.register(new ParameterizedRunnable() {
             @Override
             public Object run(Object obj) {
                 Intent intent = (Intent) ((Object[])obj)[1];
-                pos[0] = intent.getIntExtra(context.getString(R.string.player_service_data_current_pos), 0);
-                callback.run(pos[0]);
+                int pos = intent.getIntExtra(context.getString(R.string.player_service_data_current_pos), 0);
+                callback.run(pos);
                 return null;
             }
-        };
+        });
 
         Intent intent = new Intent(context, MusicPlayerService.class);
         intent.putExtra(context.getString(R.string.player_service_operation), context.getString(R.string.player_service_op_get_current_pos));
         context.startService(intent);
     }
-
-    private void setupHandlers() {
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(context.getString(R.string.player_service_intent_call_back));
-        context.registerReceiver(callbackReceiver, intentFilter);
-    }
-    public void destroyHandlers() {
-        context.unregisterReceiver(callbackReceiver);
-    }
-
-    private BroadcastReceiver callbackReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (callbackHandler != null) {
-                callbackHandler.run(new Object[] { context, intent });
+    public void getPlaylist(final PlaylistCallback callback) {
+        PlayerBroadcastReceiver.register(new ParameterizedRunnable() {
+            @Override
+            public Object run(Object obj) {
+                Intent intent = (Intent) ((Object[]) obj)[1];
+                Playlist playlist = intent.getParcelableExtra(context.getString(R.string.player_service_data_playlist));
+                callback.run(playlist);
+                return null;
             }
-        }
-    };
+        });
 
-    ParameterizedRunnable callbackHandler;
-    Context context;
+        Intent intent = new Intent(context, MusicPlayerService.class);
+        intent.putExtra(context.getString(R.string.player_service_operation), context.getString(R.string.player_service_op_get_playlist));
+        context.startService(intent);
+    }
+
+    private Context context;
 }

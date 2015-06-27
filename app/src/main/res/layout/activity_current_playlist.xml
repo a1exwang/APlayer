@@ -1,0 +1,30 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.iced.alexwang.activities.CurrentPlaylistActivity">
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Clear"
+        android:id="@+id/btnPlaylistClear"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true" />
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_above="@+id/btnPlaylistClear"
+        android:id="@+id/layoutContainingPlaylist"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Add Song"
+        android:id="@+id/btnAddSongToPlaylist"
+        android:layout_alignParentBottom="true"
+        android:layout_toEndOf="@+id/btnPlaylistClear" />
+
+</RelativeLayout>

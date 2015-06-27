@@ -29,6 +29,7 @@ public class MusicPlayerService extends Service implements MediaPlayer.OnComplet
 
     @Override
     public void onCreate() {
+        playlist = new Playlist();
         player = new MediaPlayer();
         player.setOnCompletionListener(this);
         player.setOnErrorListener(this);
@@ -76,6 +77,8 @@ public class MusicPlayerService extends Service implements MediaPlayer.OnComplet
             onGetCurrentPos();
         else if(op.equals(getString(R.string.player_service_op_get_volume)))
             onGetCurrentVolume();
+        else if(op.equals(getString(R.string.player_service_op_get_playlist)))
+            onGetPlaylist();
 
         return START_STICKY;
     }
@@ -94,8 +97,8 @@ public class MusicPlayerService extends Service implements MediaPlayer.OnComplet
         } else {
             onNext();
         }
-
     }
+
     @Override
     public void onPrepared(MediaPlayer mp) {
         mp.start();
@@ -108,7 +111,7 @@ public class MusicPlayerService extends Service implements MediaPlayer.OnComplet
     }
 
     public void onPlay(int index) {
-        if(index >= 0){
+        if(index >= 0 && index < playlist.size()){
             try {
                 tryCreate();
                 player.reset();
@@ -179,8 +182,13 @@ public class MusicPlayerService extends Service implements MediaPlayer.OnComplet
         }
     }
     public void onSetPlaylist(Playlist playlist) {
-        this.playlist = playlist;
-        tryCreate();
+        if (playlist != null) {
+            this.playlist = playlist;
+            tryCreate();
+        } else {
+            this.playlist = new Playlist();
+            tryCreate();
+        }
     }
 
     public void onGetCurrentPos() {
@@ -193,6 +201,11 @@ public class MusicPlayerService extends Service implements MediaPlayer.OnComplet
         bundle.putFloat(getString(R.string.player_service_data_volume), volume);
         callBack(R.string.player_service_op_get_current_pos, bundle);
     }
+    public void onGetPlaylist() {
+        Bundle bundle = new Bundle();
+        bundle.putParcelable(getString(R.string.player_service_data_playlist), playlist);
+        callBack(R.string.player_service_op_get_playlist, bundle);
+    }
 
     private void callBack(int opResId, Bundle data) {
         Intent intent = new Intent();
@@ -202,7 +215,7 @@ public class MusicPlayerService extends Service implements MediaPlayer.OnComplet
         getApplicationContext().sendBroadcast(intent);
     }
 
-    float volume = 0.5f;
+    float volume = 0.8f;
     MediaPlayer player;
     Playlist playlist;
 }
