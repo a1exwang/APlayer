@@ -63,5 +63,7 @@
 
     <!-- User message -->
     <string name="file_not_found_error">Cannot The File!</string>
+    <string name="kilo_bit_rate_unit">Kbps</string>
+    <string name="title_activity_show_playlists">ShowPlaylistsActivity</string>
 
 </resources>

@@ -5,7 +5,13 @@ import android.os.Parcelable;
 
 import com.iced.alexwang.libs.CachedFile;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.regex.Matcher;
@@ -17,7 +23,7 @@ import java.util.regex.Pattern;
 
 public class Song extends Item implements Parcelable, Serializable {
 
-    // comarators
+    // comparators
     public static class TitleComparator implements Comparator<Song> {
         public TitleComparator(boolean reverse){
             this.reverse = reverse;
@@ -37,6 +43,56 @@ public class Song extends Item implements Parcelable, Serializable {
             return new Artist.ArtistNameComparator(reverse).compare(lhs.artist, rhs.artist);
         }
         boolean reverse;
+    }
+
+    // to marshal and load
+    public byte[] marshal() {
+        try {
+            byte[] bytesTitle = title.getBytes(Charset.forName("UTF-8"));
+            byte[] bytesArtist = artist.marshal();
+            byte[] bytesPath = path.getBytes(Charset.forName("UTF-8"));
+
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            ObjectOutputStream oos = new ObjectOutputStream(bos);
+            oos.writeInt(bytesTitle.length);
+            oos.write(bytesTitle);
+            oos.writeInt(bytesArtist.length);
+            oos.write(bytesArtist);
+            oos.writeInt(bytesPath.length);
+            oos.write(bytesPath);
+            oos.close();
+            return bos.toByteArray();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static Song load(byte[] buf, int offset, int _size) {
+        try {
+            ByteArrayInputStream bis = new ByteArrayInputStream(buf, offset, _size);
+            ObjectInputStream ois = new ObjectInputStream(bis);
+
+            int size = ois.readInt();
+            byte[] bytes = new byte[size];
+            ois.read(bytes, 0, size);
+            String title = new String(bytes, Charset.forName("UTF-8"));
+
+            size = ois.readInt();
+            bytes = new byte[size];
+            ois.read(bytes, 0, size);
+            Artist artist = Artist.load(bytes, 0, size);
+
+            size = ois.readInt();
+            bytes = new byte[size];
+            ois.read(bytes, 0, size);
+            String path = new String(bytes, Charset.forName("UTF-8"));
+
+            return new Song(title, artist, path);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     // for parcel

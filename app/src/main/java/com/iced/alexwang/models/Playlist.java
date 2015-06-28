@@ -3,12 +3,15 @@ package com.iced.alexwang.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 
-/**
- * Created by alexwang on 15-6-14.
- */
 public class Playlist extends ArrayList<Song> implements Serializable, Parcelable {
     public Playlist() {
         current = 0;
@@ -21,6 +24,8 @@ public class Playlist extends ArrayList<Song> implements Serializable, Parcelabl
         return get(current).getPath();
     }
     public Song getCurrentSong() {
+        if (current >= size() || current < 0)
+            return null;
         return get(current);
     }
     public Song nextSong() {
@@ -41,8 +46,7 @@ public class Playlist extends ArrayList<Song> implements Serializable, Parcelabl
         return null;
     }
 
-    int current;
-
+    /* for parcelable */
     @Override
     public int describeContents() {
         return 0;
@@ -74,4 +78,54 @@ public class Playlist extends ArrayList<Song> implements Serializable, Parcelabl
         }
         current = in.readInt();
     }
+
+    /* for marshal and load */
+    public byte[] marshal() {
+        try {
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            ObjectOutputStream oos = new ObjectOutputStream(bos);
+            oos.writeInt(current);
+            oos.writeInt(size());
+
+            for (int i = 0; i < size(); ++i) {
+                Song song = get(i);
+                byte[] songBytes = song.marshal();
+                oos.writeInt(songBytes.length);
+                oos.write(songBytes);
+            }
+            oos.close();
+            return bos.toByteArray();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+    public static Playlist load(byte[] buf, int offset, int _size) {
+        try {
+            ByteArrayInputStream bis = new ByteArrayInputStream(buf, offset, _size);
+            ObjectInputStream ois = new ObjectInputStream(bis);
+
+            int current = ois.readInt();
+
+            int size = ois.readInt();
+
+            Playlist playlist = new Playlist();
+            for (int i = 0; i < size; ++i) {
+                int songBytesSize = ois.readInt();
+                byte[] songBytes = new byte[songBytesSize];
+                if(-1 == ois.read(songBytes, 0, songBytesSize)) {
+                    return null;
+                }
+                playlist.add(Song.load(songBytes, 0, songBytesSize));
+            }
+            playlist.current = current;
+
+            return playlist;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    int current;
 }

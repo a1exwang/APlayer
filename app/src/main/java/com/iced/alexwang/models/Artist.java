@@ -3,6 +3,14 @@ package com.iced.alexwang.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.iced.alexwang.libs.MarshalHelper;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.nio.charset.Charset;
 import java.util.Comparator;
 
 /**
@@ -21,6 +29,48 @@ public class Artist implements Parcelable {
             return reverse ? rhs.name.compareToIgnoreCase(lhs.name) : lhs.name.compareToIgnoreCase(rhs.name);
         }
         private boolean reverse;
+    }
+
+    // for marshal and load
+    public byte[] marshal() {
+        try {
+            byte[] bytesName = name.getBytes(Charset.forName("UTF-8"));
+            byte[] bytesType = type.getBytes(Charset.forName("UTF-8"));
+
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            ObjectOutputStream oos = new ObjectOutputStream(bos);
+            oos.writeInt(bytesName.length);
+            oos.write(bytesName);
+            oos.writeInt(bytesType.length);
+            oos.write(bytesType);
+            oos.close();
+            return bos.toByteArray();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static Artist load(byte[] buf, int offset, int size) {
+        try {
+            ByteArrayInputStream bis = new ByteArrayInputStream(buf, offset, size);
+            ObjectInputStream ois = new ObjectInputStream(bis);
+
+            int nameSize = ois.readInt();
+            byte[] bytesName = new byte[nameSize];
+            ois.read(bytesName, 0, nameSize);
+
+            int typeSize = ois.readInt();
+            byte[] bytesType = new byte[typeSize];
+            ois.read(bytesType, 0, typeSize);
+
+            Artist ret = new Artist(new String(bytesName, Charset.forName("UTF-8")));
+            ret.type = new String(bytesType, Charset.forName("UTF-8"));
+            return ret;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     public static final Parcelable.Creator<Artist> CREATOR = new Parcelable.Creator<Artist>() {

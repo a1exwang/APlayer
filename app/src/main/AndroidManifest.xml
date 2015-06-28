@@ -48,6 +48,11 @@
                 <action android:name="com.iced.alexwang.aplayer.MusicPlayerCallbackBroadcast" />
             </intent-filter>
         </receiver>
+
+        <activity
+            android:name=".ShowPlaylistsActivity"
+            android:label="@string/title_activity_show_playlists" >
+        </activity>
     </application>
 
 </manifest>

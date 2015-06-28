@@ -139,7 +139,7 @@ public class PlaylistAdapter extends RecyclerView.Adapter {
                             case 2:
                                 Intent intent = new Intent(getContext(), MusicDetailsActivity.class);
                                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                intent.putExtra(getContext().getString(R.string.detailed_data_music_path), textTitle.getText());
+                                intent.putExtra(getContext().getString(R.string.detailed_data_music_path), listItem.getPath());
                                 getContext().startActivity(intent);
                                 break;
                             default:

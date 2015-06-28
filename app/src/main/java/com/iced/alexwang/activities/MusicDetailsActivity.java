@@ -32,7 +32,7 @@ public class MusicDetailsActivity extends Activity {
         if(metaHelper != null) {
             textTitle.setText(metaHelper.getTitle());
             textArtist.setText(metaHelper.getArtist());
-            textBitrate.setText(String.valueOf((int)(metaHelper.getBitrate() / 1000.0)) + "Kbps");
+            textBitrate.setText(String.valueOf((int)(metaHelper.getBitrate() / 1000.0)) + getString(R.string.kilo_bit_rate_unit));
             textAlbum.setText(metaHelper.getAlbum());
 
             textPlaylist.setText(metaHelper.getPlaylist());

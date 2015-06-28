@@ -52,6 +52,16 @@ public class StartupActivity extends Activity {
             }
         });
 
+        btnPlaylists = (Button) findViewById(R.id.btnShowPlaylistList);
+        btnPlaylists.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(StartupActivity.this, ShowPlaylistsActivity.class);
+                startActivity(intent);
+            }
+        });
+
+
         btnPlayer = (Button) findViewById(R.id.btnPlayer);
         btnPlayer.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -130,7 +140,7 @@ public class StartupActivity extends Activity {
     }
 
 
-    Button btnPlayer, btnPlaylist, btnSelectFiles;
+    Button btnPlayer, btnPlaylist, btnPlaylists, btnSelectFiles;
     ViewGroup layout;
 
     MusicPlayerHelper playerHelper;
