@@ -61,8 +61,18 @@ public class MusicPlayerHelper {
         context.startService(intent);
     }
     public void volumeUp() {
+        float delta = context.getResources().getFraction(R.fraction.music_player_volume_delta, 1, 1);
+        Intent intent = new Intent(context, MusicPlayerService.class);
+        intent.putExtra(context.getString(R.string.player_service_operation), context.getString(R.string.player_service_op_modify_volume));
+        intent.putExtra(context.getString(R.string.player_service_data_volume), delta);
+        context.startService(intent);
     }
     public void volumeDown() {
+        float delta = -context.getResources().getFraction(R.fraction.music_player_volume_delta, 1, 1);
+        Intent intent = new Intent(context, MusicPlayerService.class);
+        intent.putExtra(context.getString(R.string.player_service_operation), context.getString(R.string.player_service_op_modify_volume));
+        intent.putExtra(context.getString(R.string.player_service_data_volume), delta);
+        context.startService(intent);
     }
     public void setVolume(float vol) {
         Intent intent = new Intent(context, MusicPlayerService.class);

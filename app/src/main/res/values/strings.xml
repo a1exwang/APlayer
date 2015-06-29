@@ -37,6 +37,7 @@
     <string name="player_service_data_playlist">PlaylistServiceDataPlaylist</string>
     <string name="player_service_op_set_volume">PlayerServiceSetVolume</string>
     <string name="player_service_op_get_volume">PlayerServiceGetVolume</string>
+    <string name="player_service_op_modify_volume">PlayerServiceModifyVolume</string>
     <string name="player_service_data_volume">PlayerServiceDataVolume</string>
     <string name="player_service_op_seek_to">PlayerServiceOpSeekTo</string>
     <string name="player_service_data_seek_to">PlayerServiceDataSeekTo</string>
@@ -60,6 +61,7 @@
 
     <!-- cached files -->
     <string name="cached_file_system_scheme_data">cache_scheme.bin</string>
+    <string name="select_file_current_directory">current_directory.bin</string>
 
     <!-- User message -->
     <string name="file_not_found_error">Cannot The File!</string>

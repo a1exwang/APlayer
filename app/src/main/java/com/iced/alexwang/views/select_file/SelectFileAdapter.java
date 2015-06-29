@@ -20,12 +20,15 @@ import com.iced.alexwang.models.Artist;
 import com.iced.alexwang.models.Playlist;
 import com.iced.alexwang.models.SelectFile;
 import com.iced.alexwang.models.Song;
+import com.iced.alexwang.models.callbacks.CurrentDirectoryChangedCallback;
 import com.iced.alexwang.models.callbacks.FlushCallback;
 import com.iced.alexwang.models.callbacks.ParameterizedRunnable;
 import com.iced.alexwang.models.callbacks.PlaylistCallback;
 import com.iced.alexwang.player.MusicPlayerHelper;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.regex.Pattern;
 // This adapter is for the ListView in the Activity
 public class SelectFileAdapter extends RecyclerView.Adapter {
@@ -53,11 +56,30 @@ public class SelectFileAdapter extends RecyclerView.Adapter {
         this.fileList = fileFilter(currentDir, context);
     }
 
+    public void sort(Comparator<SelectFile> comparator) {
+        Collections.sort(fileList, comparator);
+    }
+
+    public void selectAll() {
+        for (int i = 0; i < fileList.size(); ++i) {
+            fileList.get(i).checked = true;
+        }
+        if (onFlush != null)
+            onFlush.flushChanged();
+    }
     public void unselectAll() {
         for (int i = 0; i < fileList.size(); ++i) {
             fileList.get(i).checked = false;
         }
-        onFlush.flush(currentDir);
+        if (onFlush != null)
+            onFlush.flushChanged();
+    }
+    public void selectReverse() {
+        for (int i = 0; i < fileList.size(); ++i) {
+            fileList.get(i).checked = !fileList.get(i).checked;
+        }
+        if (onFlush != null)
+            onFlush.flushChanged();
     }
 
     public ArrayList<CachedFile> getAllSelected() {
@@ -96,6 +118,10 @@ public class SelectFileAdapter extends RecyclerView.Adapter {
     public void setOnFlushCallback(FlushCallback onFlush) {
         this.onFlush = onFlush;
     }
+    public void setOnCurrentDirectoryChangedCallback(CurrentDirectoryChangedCallback onChanged) {
+        this.onChanged = onChanged;
+    }
+
 
     class SelectFileViewHolder extends RecyclerView.ViewHolder {
 
@@ -118,23 +144,21 @@ public class SelectFileAdapter extends RecyclerView.Adapter {
     public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
         final CachedFile cf = fileList.get(position).file;
         final TextView tvFile = (TextView) holder.itemView.findViewById(R.id.textFileName);
-        final ImageView imageBack = (ImageView) holder.itemView.findViewById(R.id.imgParentDir);
 
         if(cf.getName().equals("..")) {
             // this view is 'go to parent'
-            tvFile.setVisibility(View.INVISIBLE);
-            imageBack.setOnClickListener(new View.OnClickListener() {
+            tvFile.setText("..");
+            tvFile.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     if (!currentDir.getAbsolutePath().equals(Environment.getExternalStorageDirectory().toString())) {
                         currentDir = currentDir.getParrent();
-                        if (onFlush != null)
-                            onFlush.flush(currentDir);
+                        if (onChanged != null)
+                            onChanged.directoryChanged(currentDir);
                     }
                 }
             });
         } else {
-            imageBack.setVisibility(View.INVISIBLE);
             tvFile.setText(cf.getName());
             tvFile.setTextColor(cf.isDirectory() ? Color.BLUE : Color.BLACK);
             tvFile.setOnClickListener(new View.OnClickListener() {
@@ -149,7 +173,7 @@ public class SelectFileAdapter extends RecyclerView.Adapter {
                         playerHelper.getPlaylist(new PlaylistCallback() {
                             @Override
                             public void run(Playlist playlist) {
-                                playlist.add(new Song("title", new Artist("me"), cf.getAbsolutePath()));
+                                playlist.add(Song.createFromCachedFile(cf));
                                 playerHelper.setPlaylist(playlist);
                                 playerHelper.play();
                                 playerHelper.last();
@@ -157,13 +181,14 @@ public class SelectFileAdapter extends RecyclerView.Adapter {
                         });
                     }
 
-                    if (onFlush != null)
-                        onFlush.flush(currentDir);
+                    if (onChanged != null)
+                        onChanged.directoryChanged(currentDir);
                 }
             });
         }
 
         final CheckBox checkSelect = (CheckBox) holder.itemView.findViewById(R.id.checkSelected);
+        checkSelect.setChecked(fileList.get(position).checked);
         if(!cf.getName().equals("..")) {
             checkSelect.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -177,6 +202,8 @@ public class SelectFileAdapter extends RecyclerView.Adapter {
     }
 
     @Override
+    public long getItemId(int position) { return position; }
+    @Override
     public int getItemCount() {
         return fileList.size();
     }
@@ -188,4 +215,5 @@ public class SelectFileAdapter extends RecyclerView.Adapter {
 
     /* callbacks */
     FlushCallback onFlush;
+    CurrentDirectoryChangedCallback onChanged;
 }

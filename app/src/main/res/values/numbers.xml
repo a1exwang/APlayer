@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <fraction name="music_player_volume_delta">5%</fraction>
+    <fraction name="music_player_default_volume">80%</fraction>
+</resources>

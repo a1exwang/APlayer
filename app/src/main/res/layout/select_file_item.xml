@@ -12,14 +12,6 @@
         android:layout_centerVertical="true"
         android:layout_alignParentStart="true"
         android:layout_toStartOf="@+id/checkSelected" />
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/imgParentDir"
-        android:contentDescription="Parent Folder"
-        android:src="@drawable/ic_arrow_back_black_18dp"
-        android:layout_alignParentStart="true"
-        android:layout_centerVertical="true" />
 
     <CheckBox
         android:layout_width="wrap_content"

@@ -26,10 +26,15 @@ import com.iced.alexwang.models.Song;
 import com.iced.alexwang.models.callbacks.FilesSelectedCallback;
 import com.iced.alexwang.models.callbacks.PlaylistCallback;
 import com.iced.alexwang.player.MusicPlayerHelper;
-import com.iced.alexwang.views.select_file.SelectFileAdapter;
 import com.iced.alexwang.views.select_file.SelectFileView;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.regex.Pattern;
 
@@ -53,7 +58,7 @@ public class SelectFileActivity extends Activity {
         mainLayout = (RelativeLayout) findViewById(R.id.layoutSelectFileActivityMain);
 
         // create file list
-        selectFileView = new SelectFileView(this, currentDir);
+        selectFileView = SelectFileView.attachToViewGroup(SelectFileActivity.this, currentDir, mainLayout);
         selectFileView.setOnFilesSelectedListener(new FilesSelectedCallback() {
             @Override
             public boolean filesSelected(final ArrayList<CachedFile> files) {
@@ -68,28 +73,24 @@ public class SelectFileActivity extends Activity {
                             }
                         }
                         playerHelper.setPlaylist(playlist);
-                        playerHelper.play();
+//                        playerHelper.play();
                     }
                 });
                 return false;
             }
         });
+    }
 
-        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
-        params.addRule(RelativeLayout.ALIGN_PARENT_START);
-        params.addRule(RelativeLayout.ALIGN_PARENT_END);
-        params.addRule(RelativeLayout.ALIGN_PARENT_TOP);
-        params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-        mainLayout.addView(selectFileView, params);
-
-        // init button save
-        Button btnSave = (Button) findViewById(R.id.btnFileSelectSave);
-        btnSave.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                CachedFileSystem.getInstance().save();
-            }
-        });
+    @Override
+    protected void onStart() {
+        super.onStart();
+        load();
+        selectFileView.flushCurrentDirectory(currentDir);
+    }
+    @Override
+    protected void onStop() {
+        super.onStop();
+        save();
     }
 
     @Override
@@ -104,19 +105,7 @@ public class SelectFileActivity extends Activity {
         int id = item.getItemId();
 
         if (id == R.id.menu_select_file_sort_by_file_name) {
-            sortReverse = !sortReverse;
-//            sort(new Comparator<SelectFile>() {
-//                @Override
-//                public int compare(SelectFile lhs, SelectFile rhs) {
-//                    if (lhs.file.getName().equals(".."))
-//                        return -1;
-//                    else if(rhs.file.getName().equals(".."))
-//                        return 1;
-//                    else {
-//                        return (sortReverse ? -1 : 1) * lhs.file.getName().compareToIgnoreCase(rhs.file.getName());
-//                    }
-//                }
-//            });
+            selectFileView.sortByFileName();
         } else if (id == R.id.menu_select_file_sort_by_artist) {
 
         } else if (id == R.id.menu_select_file_sort_by_date) {
@@ -126,31 +115,49 @@ public class SelectFileActivity extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
-    /* Additional Data Structures */
 
-    // filter files except music files and add a upper dir
+    public void save() {
+        try {
+            FileOutputStream fos = new FileOutputStream(Environment.getExternalStorageDirectory() + "/" + getString(R.string.select_file_current_directory));
+            ObjectOutputStream oos = new ObjectOutputStream(fos);
 
-    /* Functional Interfaces */
-//    public void flush() {
-//        SelectFileAdapter adapter = new SelectFileAdapter();
-//        list.setAdapter(adapter);
-//        adapter.notifyDataSetInvalidated();
-//    }
-//
-//    public void sort(Comparator<SelectFile> comparator) {
-//        SelectFileAdapter adapter = (SelectFileAdapter) list.getAdapter();
-//        adapter.sort(comparator);
-//        list.setAdapter(adapter);
-//        adapter.notifyDataSetChanged();
-//    }
+            String dir = selectFileView.getCurrentDir().getAbsolutePath();
+            byte[] dirBytes = dir.getBytes(Charset.forName("UTF-8"));
+            oos.writeInt(dirBytes.length);
+            oos.write(dirBytes);
+            oos.close();
+            fos.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    public void load() {
+        String saveFileDir = Environment.getExternalStorageDirectory() + "/" + getString(R.string.select_file_current_directory);
+        File file = new File(saveFileDir);
+        if(file.exists()) {
+            try {
+                FileInputStream fis = new FileInputStream(saveFileDir);
+                ObjectInputStream ois = new ObjectInputStream(fis);
 
+                int size = ois.readInt();
+                byte[] dirBytes = new byte[size];
+                ois.read(dirBytes, 0, size);
+                String dir = new String(dirBytes, Charset.forName("UTF-8"));
+                currentDir = CachedFileSystem.getInstance().open(dir);
+
+                ois.close();
+                fis.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        }
+    }
 
     /* Private Data */
     CachedFile currentDir;
     RelativeLayout mainLayout;
     SelectFileView selectFileView;
 
-    boolean sortReverse = true;
-    
     MusicPlayerHelper playerHelper;
 }

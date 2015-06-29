@@ -30,6 +30,7 @@ public class MusicPlayerService extends Service implements MediaPlayer.OnComplet
     @Override
     public void onCreate() {
         playlist = new Playlist();
+        volume = getResources().getFraction(R.fraction.music_player_default_volume, 1, 1);
         player = new MediaPlayer();
         player.setOnCompletionListener(this);
         player.setOnErrorListener(this);
@@ -45,10 +46,10 @@ public class MusicPlayerService extends Service implements MediaPlayer.OnComplet
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
+        if (intent == null) return START_STICKY;
         String op = intent.getExtras().getString(getString(R.string.player_service_operation));
-        if (op == null){
+        if (op == null)
             return START_STICKY;
-        }
         else if(op.equals(getString(R.string.player_service_op_start))){
             int index = intent.getIntExtra(getString(R.string.player_service_data_start_index), 0);
             onPlay(index);
@@ -69,6 +70,10 @@ public class MusicPlayerService extends Service implements MediaPlayer.OnComplet
             float vol = intent.getFloatExtra(getString(R.string.player_service_data_volume), 0);
             onSetVolume(vol);
         }
+        else if(op.equals(getString(R.string.player_service_op_modify_volume))) {
+            float delta = intent.getFloatExtra(getString(R.string.player_service_data_volume), 0);
+            onModifyVolume(delta);
+        }
         else if(op.equals(getString(R.string.player_service_op_set_playlist)))
             onSetPlaylist((Playlist)intent.getParcelableExtra(getString(R.string.player_service_data_playlist)));
         else if(op.equals(getString(R.string.player_service_op_toggle_loop)))
@@ -79,6 +84,7 @@ public class MusicPlayerService extends Service implements MediaPlayer.OnComplet
             onGetCurrentVolume();
         else if(op.equals(getString(R.string.player_service_op_get_playlist)))
             onGetPlaylist();
+
 
         return START_STICKY;
     }
@@ -170,7 +176,16 @@ public class MusicPlayerService extends Service implements MediaPlayer.OnComplet
             volume = vol;
             player.setVolume(vol, vol);
         }
-
+    }
+    public void onModifyVolume(float deltaVol) {
+        if (player != null) {
+            volume += deltaVol;
+            if (volume > 1)
+                volume = 1;
+            else if (volume < 0)
+                volume = 0;
+            player.setVolume(volume, volume);
+        }
     }
     public void onToggleLoop() {
         if (player != null) {

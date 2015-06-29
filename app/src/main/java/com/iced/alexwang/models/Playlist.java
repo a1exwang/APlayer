@@ -1,5 +1,6 @@
 package com.iced.alexwang.models;
 
+import android.os.Environment;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -11,6 +12,8 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Playlist extends ArrayList<Song> implements Serializable, Parcelable {
     public Playlist() {
@@ -20,6 +23,25 @@ public class Playlist extends ArrayList<Song> implements Serializable, Parcelabl
         return null;
     }
 
+    public String getUpperFolderName() {
+        String path = get(current).getPath();
+        Pattern pattern = Pattern.compile("/([^/]*)/[^/]+$");
+        Matcher matcher = pattern.matcher(path);
+        if (matcher.find()) {
+            return matcher.group(1);
+        }
+        return "Playlist";
+    }
+    public String getUpperFolderPath() {
+        String path = get(current).getPath();
+        Pattern pattern = Pattern.compile("(/[^/]*)/[^/]+$");
+        Matcher matcher = pattern.matcher(path);
+        if (matcher.find()) {
+            return matcher.group(1);
+        }
+        else
+            return Environment.getExternalStorageDirectory().getAbsolutePath();
+    }
     public String getCurrentSongPath(){
         return get(current).getPath();
     }

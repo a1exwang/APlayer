@@ -1,5 +1,6 @@
 package com.iced.alexwang.libs;
 
+import android.os.Environment;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -10,6 +11,7 @@ import com.iced.alexwang.models.callbacks.ParameterizedRunnable;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -18,8 +20,11 @@ import java.io.OutputStreamWriter;
 import java.io.Serializable;
 import java.io.StreamCorruptedException;
 import java.nio.charset.Charset;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -128,9 +133,28 @@ public class CachedFile implements Marshalable {
         }
     }
 
+    public Date getLastModifiedDate() {
+        File file = new File(getAbsolutePath());
+        Date date =  new Date(file.lastModified());
+        return date;
+    }
+
     public String getAbsolutePath() {
         return absolutePath;
     }
+    public String getRelativePathToSdcard() {
+        if (absolutePath.equalsIgnoreCase(Environment.getExternalStorageDirectory().toString()))
+            return "SDCard";
+
+        Pattern patternUpperFolderPath = Pattern.compile(Environment.getExternalStorageDirectory().toString().replace(".", "\\.") + "/(.+)$");
+        Matcher matcher = patternUpperFolderPath.matcher(absolutePath);
+        if (matcher.find()) {
+            return "SDCard/" + matcher.group(1);
+        } else {
+            return "Unknown Path!";
+        }
+    }
+
 
     ArrayList<CachedFile> children = new ArrayList<>();
     String absolutePath;

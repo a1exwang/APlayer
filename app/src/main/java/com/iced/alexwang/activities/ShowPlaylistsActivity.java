@@ -1,6 +1,7 @@
 package com.iced.alexwang.activities;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Environment;
@@ -18,12 +19,16 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.iced.alexwang.activities.R;
+import com.iced.alexwang.libs.CachedFile;
 import com.iced.alexwang.models.Playlist;
 import com.iced.alexwang.models.PlaylistList;
+import com.iced.alexwang.models.Song;
+import com.iced.alexwang.models.callbacks.FilesSelectedCallback;
 import com.iced.alexwang.models.callbacks.PlaylistCallback;
 import com.iced.alexwang.player.MusicPlayerHelper;
 import com.iced.alexwang.views.decorator.DividerItemDecoration;
 import com.iced.alexwang.views.playlist.PlaylistAdapter;
+import com.iced.alexwang.views.select_file.SelectFileView;
 
 import java.util.ArrayList;
 import java.util.regex.Matcher;
@@ -41,7 +46,22 @@ public class ShowPlaylistsActivity extends Activity {
         btnAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                AlertDialog.Builder builder = new AlertDialog.Builder(ShowPlaylistsActivity.this);
+                SelectFileView selectFileView = new SelectFileView(ShowPlaylistsActivity.this);
+                selectFileView.setOnFilesSelectedListener(new FilesSelectedCallback() {
+                    @Override
+                    public boolean filesSelected(ArrayList<CachedFile> files) {
+                        Playlist playlist = new Playlist();
+                        for (CachedFile f : files) {
+                           playlist.add(Song.createFromCachedFile(f));
+                        }
+                        listAdapter.addPlaylist(playlist);
+                        flush();
+                        return true;
+                    }
+                });
+                builder.setView(selectFileView);
+                builder.show();
             }
         });
 
@@ -50,15 +70,16 @@ public class ShowPlaylistsActivity extends Activity {
             @Override
             public void run(Playlist playlist) {
                 if (playlist != null && playlist.size() > 0) {
-                    PlaylistList playlists = new PlaylistList();
+                    playlists = new PlaylistList();
                     playlists.addPlaylist(playlist);
 
-                    RecyclerView list = new RecyclerView(ShowPlaylistsActivity.this);
-                    list.setLayoutManager(new LinearLayoutManager(ShowPlaylistsActivity.this));
-                    list.setAdapter(new PlaylistListAdapter(ShowPlaylistsActivity.this, playlists));
-                    list.setItemAnimator(new DefaultItemAnimator());
-                    list.addItemDecoration(new DividerItemDecoration(ShowPlaylistsActivity.this, DividerItemDecoration.HORIZONTAL_LIST));
-                    layoutPlaylists.addView(list);
+                    listView = new RecyclerView(ShowPlaylistsActivity.this);
+                    listView.setLayoutManager(new LinearLayoutManager(ShowPlaylistsActivity.this));
+                    listAdapter = new PlaylistListAdapter(ShowPlaylistsActivity.this, playlists);
+                    listView.setAdapter(listAdapter);
+                    listView.setItemAnimator(new DefaultItemAnimator());
+                    listView.addItemDecoration(new DividerItemDecoration(ShowPlaylistsActivity.this, DividerItemDecoration.HORIZONTAL_LIST));
+                    layoutPlaylists.addView(listView);
                 }
             }
         });
@@ -86,6 +107,11 @@ public class ShowPlaylistsActivity extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
+    public void flush() {
+        //listAdapter.notifyDataSetChanged();
+        listView.setAdapter(listAdapter);
+    }
+
     static class PlaylistListAdapter extends RecyclerView.Adapter<PlaylistListViewHolder> {
 
         public PlaylistListAdapter(Context context, PlaylistList playlists) {
@@ -101,8 +127,8 @@ public class ShowPlaylistsActivity extends Activity {
         @Override
         public void onBindViewHolder(PlaylistListViewHolder holder, int position) {
             Playlist playlist = playlistList.get(position);
-            holder.setPlaylistName(playlist.getCurrentSong().getTitle());
-            holder.setPlaylistPath(absPathToSdcardPath(playlist.getCurrentSongPath()));
+            holder.setPlaylistName(playlist.getUpperFolderName());
+            holder.setPlaylistPath(absPathToSdcardPath(playlist.getUpperFolderPath()));
             if (position == playlistList.getCurrent()) {
                 holder.setCurrent();
             }
@@ -167,5 +193,8 @@ public class ShowPlaylistsActivity extends Activity {
     }
 
     RelativeLayout layoutPlaylists;
+    RecyclerView listView;
+    PlaylistListAdapter listAdapter;
+    PlaylistList playlists;
     Button btnAdd;
 }
