@@ -207,9 +207,11 @@ public class MusicPlayerService extends Service implements MediaPlayer.OnComplet
     }
 
     public void onGetCurrentPos() {
-        Bundle bundle = new Bundle();
-        bundle.putInt(getString(R.string.player_service_data_current_pos), player.getCurrentPosition());
-        callBack(R.string.player_service_op_get_current_pos, bundle);
+        if (playlist != null) {
+            Bundle bundle = new Bundle();
+            bundle.putInt(getString(R.string.player_service_data_current_pos), player.getCurrentPosition());
+            callBack(R.string.player_service_op_get_current_pos, bundle);
+        }
     }
     public void onGetCurrentVolume() {
         Bundle bundle = new Bundle();
@@ -217,11 +219,14 @@ public class MusicPlayerService extends Service implements MediaPlayer.OnComplet
         callBack(R.string.player_service_op_get_current_pos, bundle);
     }
     public void onGetPlaylist() {
-        Bundle bundle = new Bundle();
-        bundle.putParcelable(getString(R.string.player_service_data_playlist), playlist);
-        callBack(R.string.player_service_op_get_playlist, bundle);
+        if (playlist != null) {
+            Bundle bundle = new Bundle();
+            bundle.putParcelable(getString(R.string.player_service_data_playlist), playlist);
+            callBack(R.string.player_service_op_get_playlist, bundle);
+        }
     }
 
+    // return value to caller
     private void callBack(int opResId, Bundle data) {
         Intent intent = new Intent();
         intent.setAction(getString(R.string.player_service_intent_call_back));

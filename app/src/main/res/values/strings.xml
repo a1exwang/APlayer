@@ -61,11 +61,13 @@
 
     <!-- cached files -->
     <string name="cached_file_system_scheme_data">cache_scheme.bin</string>
-    <string name="select_file_current_directory">current_directory.bin</string>
+    <string name="select_file_current_directory_path">current_directory.bin</string>
+    <string name="playlists_save_file_path">playlists.bin</string>
 
     <!-- User message -->
     <string name="file_not_found_error">Cannot The File!</string>
     <string name="kilo_bit_rate_unit">Kbps</string>
     <string name="title_activity_show_playlists">ShowPlaylistsActivity</string>
+    <string name="sdcard_name">SDCard</string>
 
 </resources>

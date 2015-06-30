@@ -98,6 +98,10 @@ public class PlaylistAdapter extends RecyclerView.Adapter {
         removeCallback = c;
     }
 
+    public Playlist getPlaylist() {
+        return playlist;
+    }
+
     void initView(final ViewGroup layout, final Song listItem, final int position) {
         final TextView textTitle = (TextView) layout.findViewById(R.id.textPlaylistItemTitle);
     }

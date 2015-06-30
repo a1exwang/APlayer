@@ -7,17 +7,17 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="File name"
+        android:text=""
         android:id="@+id/textFileName"
+        android:layout_alignParentEnd="true"
         android:layout_centerVertical="true"
-        android:layout_alignParentStart="true"
-        android:layout_toStartOf="@+id/checkSelected" />
+        android:layout_toEndOf="@+id/checkSelected" />
 
     <CheckBox
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/checkSelected"
         android:layout_centerVertical="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentStart="true" />
 
 </RelativeLayout>

@@ -15,8 +15,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
 import android.widget.RelativeLayout;
 
 import com.iced.alexwang.libs.CachedFile;
@@ -62,10 +60,9 @@ public class SelectFileActivity extends Activity {
         selectFileView.setOnFilesSelectedListener(new FilesSelectedCallback() {
             @Override
             public boolean filesSelected(final ArrayList<CachedFile> files) {
-
                 playerHelper.getPlaylist(new PlaylistCallback() {
                     @Override
-                    public void run(Playlist playlist) {
+                    public void onPlaylistReceived(Playlist playlist) {
                         for (CachedFile f : files) {
                             // check whether it's a valid music file.
                             if (Pattern.compile(getString(R.string.select_file_supported_files)).matcher(f.getName()).matches()) {
@@ -73,7 +70,6 @@ public class SelectFileActivity extends Activity {
                             }
                         }
                         playerHelper.setPlaylist(playlist);
-//                        playerHelper.play();
                     }
                 });
                 return false;
@@ -115,10 +111,9 @@ public class SelectFileActivity extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
-
     public void save() {
         try {
-            FileOutputStream fos = new FileOutputStream(Environment.getExternalStorageDirectory() + "/" + getString(R.string.select_file_current_directory));
+            FileOutputStream fos = new FileOutputStream(Environment.getExternalStorageDirectory() + "/" + getString(R.string.select_file_current_directory_path));
             ObjectOutputStream oos = new ObjectOutputStream(fos);
 
             String dir = selectFileView.getCurrentDir().getAbsolutePath();
@@ -132,7 +127,7 @@ public class SelectFileActivity extends Activity {
         }
     }
     public void load() {
-        String saveFileDir = Environment.getExternalStorageDirectory() + "/" + getString(R.string.select_file_current_directory);
+        String saveFileDir = Environment.getExternalStorageDirectory() + "/" + getString(R.string.select_file_current_directory_path);
         File file = new File(saveFileDir);
         if(file.exists()) {
             try {

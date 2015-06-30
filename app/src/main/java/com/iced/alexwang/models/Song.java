@@ -61,7 +61,9 @@ public class Song extends Item implements Parcelable, Serializable {
             oos.writeInt(bytesPath.length);
             oos.write(bytesPath);
             oos.close();
-            return bos.toByteArray();
+            byte[] ret = bos.toByteArray();
+            bos.close();
+            return ret;
         } catch (IOException e) {
             e.printStackTrace();
             return null;
@@ -75,17 +77,17 @@ public class Song extends Item implements Parcelable, Serializable {
 
             int size = ois.readInt();
             byte[] bytes = new byte[size];
-            ois.read(bytes, 0, size);
+            ois.readFully(bytes, 0, size);
             String title = new String(bytes, Charset.forName("UTF-8"));
 
             size = ois.readInt();
             bytes = new byte[size];
-            ois.read(bytes, 0, size);
+            ois.readFully(bytes, 0, size);
             Artist artist = Artist.load(bytes, 0, size);
 
             size = ois.readInt();
             bytes = new byte[size];
-            ois.read(bytes, 0, size);
+            ois.readFully(bytes, 0, size);
             String path = new String(bytes, Charset.forName("UTF-8"));
 
             return new Song(title, artist, path);

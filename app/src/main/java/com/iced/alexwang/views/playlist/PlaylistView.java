@@ -13,6 +13,7 @@ import android.widget.RelativeLayout;
 
 import com.iced.alexwang.models.Playlist;
 import com.iced.alexwang.models.Song;
+import com.iced.alexwang.player.MusicPlayerHelper;
 import com.iced.alexwang.views.decorator.DividerItemDecoration;
 
 public class PlaylistView extends RelativeLayout {
@@ -33,6 +34,8 @@ public class PlaylistView extends RelativeLayout {
     public void flush() {
         listView.setAdapter(listAdapter);
         listAdapter.notifyDataSetChanged();
+        MusicPlayerHelper.getInstance(getContext()).setPlaylist(listAdapter.getPlaylist());
+        MusicPlayerHelper.getInstance(getContext()).play();
     }
 
     private void createListView() {

@@ -1,11 +1,8 @@
 package com.iced.alexwang.player;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Parcelable;
-import android.widget.Toast;
 
 import com.iced.alexwang.activities.R;
 import com.iced.alexwang.models.callbacks.ParameterizedRunnable;
@@ -13,8 +10,6 @@ import com.iced.alexwang.models.Playlist;
 import com.iced.alexwang.models.callbacks.PlaylistCallback;
 import com.iced.alexwang.models.callbacks.PositionCallback;
 import com.iced.alexwang.models.callbacks.VolumeCallback;
-
-import java.util.ArrayList;
 
 public class MusicPlayerHelper {
 
@@ -133,7 +128,7 @@ public class MusicPlayerHelper {
             public Object run(Object obj) {
                 Intent intent = (Intent) ((Object[]) obj)[1];
                 Playlist playlist = intent.getParcelableExtra(context.getString(R.string.player_service_data_playlist));
-                callback.run(playlist);
+                callback.onPlaylistReceived(playlist);
                 return null;
             }
         });

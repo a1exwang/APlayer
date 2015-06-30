@@ -44,7 +44,9 @@ public class Artist implements Parcelable {
             oos.writeInt(bytesType.length);
             oos.write(bytesType);
             oos.close();
-            return bos.toByteArray();
+            byte[] ret = bos.toByteArray();
+            bos.close();
+            return ret;
         } catch (IOException e) {
             e.printStackTrace();
             return null;
@@ -58,11 +60,11 @@ public class Artist implements Parcelable {
 
             int nameSize = ois.readInt();
             byte[] bytesName = new byte[nameSize];
-            ois.read(bytesName, 0, nameSize);
+            ois.readFully(bytesName, 0, nameSize);
 
             int typeSize = ois.readInt();
             byte[] bytesType = new byte[typeSize];
-            ois.read(bytesType, 0, typeSize);
+            ois.readFully(bytesType, 0, typeSize);
 
             Artist ret = new Artist(new String(bytesName, Charset.forName("UTF-8")));
             ret.type = new String(bytesType, Charset.forName("UTF-8"));

@@ -15,7 +15,7 @@
         android:layout_toStartOf="@+id/btnSelectFileReverse"
         android:layout_above="@+id/btnSelectFileReverse"
         android:layout_alignEnd="@+id/btnSelectFileReverse"
-        android:layout_below="@+id/textSelectFileCurrentPath">
+        android:layout_below="@+id/textCurrentPath">
 
     </RelativeLayout>
 
@@ -41,7 +41,7 @@
         android:text="All"
         android:id="@+id/btnSelectFileSelectAll"
         android:layout_alignParentBottom="true"
-        android:layout_toEndOf="@+id/btnSelectFileAddAll" />
+        android:layout_alignStart="@+id/btnSelectFileSelectCurrentDirectory" />
 
     <Button
         android:layout_width="wrap_content"
@@ -58,46 +58,44 @@
         android:text="Inverse"
         android:id="@+id/btnSelectFileReverse"
         android:layout_above="@+id/btnSelectFileSelectAll"
-        android:layout_alignParentEnd="true"
-        android:layout_toEndOf="@+id/btnSelectFileSelectAll" />
+        android:layout_alignParentEnd="true" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Name"
-        android:id="@+id/btnSortByFileName"
-        android:layout_alignTop="@+id/btnSelectFileReverse"
-        android:layout_alignStart="@+id/btnSelectFileSelectAll"
-        android:layout_alignEnd="@+id/btnSelectFileSelectAll" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Date"
-        android:id="@+id/btnSortByDate"
-        android:layout_below="@+id/listSelectFile"
+        android:id="@+id/btnSelectFileSortByFileName"
+        android:layout_above="@+id/btnSelectFileAddAll"
         android:layout_toEndOf="@+id/btnSelectFilePlayAll" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Foobar"
-        android:id="@+id/btnFoorbar"
-        android:layout_alignTop="@+id/btnSortByDate"
-        android:layout_toStartOf="@+id/btnSelectFileAddAll" />
+        android:text="Date"
+        android:id="@+id/btnSelectFileSortByDate"
+        android:layout_below="@+id/listSelectFile"
+        android:layout_alignParentStart="true"
+        android:layout_toStartOf="@+id/btnSelectFileSortByFileName" />
 
-    <TextView
+    <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Current Path"
+        android:text="Select"
+        android:id="@+id/btnSelectFileSelectCurrentDirectory"
+        android:layout_above="@+id/btnSelectFileUnselectAll"
+        android:layout_toStartOf="@+id/btnSelectFileUnselectAll" />
+
+    <com.iced.alexwang.views.select_file.PathNavigationView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
         android:paddingLeft="@dimen/activity_horizontal_margin"
         android:paddingRight="@dimen/activity_horizontal_margin"
         android:paddingTop="@dimen/activity_vertical_margin"
-        android:id="@+id/textSelectFileCurrentPath"
+        android:id="@+id/textCurrentPath"
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true"
-        android:layout_alignEnd="@+id/btnSelectFileReverse" />
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="SDCard" />
 
 </RelativeLayout>
 

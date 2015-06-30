@@ -24,7 +24,9 @@ public class PlaylistList extends ArrayList<Playlist> {
                 oos.write(plBytes);
             }
             oos.close();
-            return bos.toByteArray();
+            byte[] ret = bos.toByteArray();
+            bos.close();
+            return ret;
         } catch (IOException e) {
             e.printStackTrace();
             return null;
@@ -43,9 +45,7 @@ public class PlaylistList extends ArrayList<Playlist> {
             for (int i = 0; i < size; ++i) {
                 int plBytesSize = ois.readInt();
                 byte[] plBytes = new byte[plBytesSize];
-                if(-1 == ois.read(plBytes, 0, plBytesSize)) {
-                    return null;
-                }
+                ois.readFully(plBytes, 0, plBytesSize);
                 list.add(Playlist.load(plBytes, 0, plBytesSize));
             }
             list.current = current;

@@ -14,10 +14,15 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.iced.alexwang.libs.CachedFile;
+import com.iced.alexwang.libs.CachedFileSystem;
+import com.iced.alexwang.models.Playlist;
+import com.iced.alexwang.models.Song;
 import com.iced.alexwang.models.callbacks.PositionCallback;
 import com.iced.alexwang.models.callbacks.VolumeCallback;
 import com.iced.alexwang.player.MusicPlayerHelper;
 
+import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -60,6 +65,33 @@ public class StartupActivity extends Activity {
                 startActivity(intent);
             }
         });
+//        btnPlaylists.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Playlist playlist = new Playlist();
+//                CachedFile file = CachedFileSystem.getInstance().open("/storage/sdcard/Music/History/2009.06.03");
+//                ArrayList<CachedFile> files = file.getChildren();
+//                for (CachedFile f : files) {
+//                    if (Pattern.compile(getString(R.string.select_file_supported_files)).matcher(f.getName()).matches()) {
+//                        playlist.add(Song.createFromCachedFile(f));
+//                    }
+//                }
+//
+//
+//                byte[] b1 = playlist.get(7).marshal();
+//                Song s1 = Song.load(b1, 0, b1.length);
+//
+//
+//                byte[] b = playlist.marshal();
+//                Playlist p = Playlist.load(b, 0, b.length);
+//                StringBuilder sb = new StringBuilder();
+//                for (Song s : p) {
+//                    sb.append(s.getPath() + "\n");
+//                }
+//
+//                Toast.makeText(StartupActivity.this, sb.toString(), Toast.LENGTH_SHORT).show();
+//            }
+//        });
 
 
         btnPlayer = (Button) findViewById(R.id.btnPlayer);

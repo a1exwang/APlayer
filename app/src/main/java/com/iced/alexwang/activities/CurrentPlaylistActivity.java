@@ -25,7 +25,7 @@ public class CurrentPlaylistActivity extends Activity {
         playerHelper = MusicPlayerHelper.getInstance(this);
         playerHelper.getPlaylist(new PlaylistCallback() {
             @Override
-            public void run(final Playlist p) {
+            public void onPlaylistReceived(final Playlist p) {
                 playlistView = new PlaylistView(CurrentPlaylistActivity.this);
                 playlistView.setPlaylist(p);
                 layoutPlaylist.addView(playlistView);

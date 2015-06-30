@@ -2,9 +2,11 @@ package com.iced.alexwang.views.select_file;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.nfc.Tag;
 import android.os.Environment;
 import android.speech.RecognizerIntent;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -85,7 +87,7 @@ public class SelectFileAdapter extends RecyclerView.Adapter {
     public ArrayList<CachedFile> getAllSelected() {
         ArrayList<CachedFile> ret = new ArrayList<>();
         for (int i = 0; i < fileList.size(); ++i) {
-            if (fileList.get(i).checked) {
+            if (fileList.get(i).checked && !fileList.get(i).file.getName().equals("..")) {
                 ret.add(fileList.get(i).file);
             }
         }
@@ -95,7 +97,7 @@ public class SelectFileAdapter extends RecyclerView.Adapter {
     public ArrayList<CachedFile> getAllSelectedFiles() {
         final ArrayList<CachedFile> ret = new ArrayList<>();
         for (int i = 0; i < fileList.size(); ++i) {
-            if (fileList.get(i).checked) {
+            if (fileList.get(i).checked && !fileList.get(i).file.getName().equals("..")) {
                 if(fileList.get(i).file.isDirectory()) {
                     CachedFileSystem.dfsCachedSubDirs(fileList.get(i).file, new ParameterizedRunnable() {
                         @Override
@@ -122,7 +124,6 @@ public class SelectFileAdapter extends RecyclerView.Adapter {
         this.onChanged = onChanged;
     }
 
-
     class SelectFileViewHolder extends RecyclerView.ViewHolder {
 
         public SelectFileViewHolder(View itemView) {
@@ -142,6 +143,7 @@ public class SelectFileAdapter extends RecyclerView.Adapter {
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
+
         final CachedFile cf = fileList.get(position).file;
         final TextView tvFile = (TextView) holder.itemView.findViewById(R.id.textFileName);
 
@@ -172,7 +174,7 @@ public class SelectFileAdapter extends RecyclerView.Adapter {
                         // click a file to add it to the end of the playlist
                         playerHelper.getPlaylist(new PlaylistCallback() {
                             @Override
-                            public void run(Playlist playlist) {
+                            public void onPlaylistReceived(Playlist playlist) {
                                 playlist.add(Song.createFromCachedFile(cf));
                                 playerHelper.setPlaylist(playlist);
                                 playerHelper.play();
@@ -189,16 +191,20 @@ public class SelectFileAdapter extends RecyclerView.Adapter {
 
         final CheckBox checkSelect = (CheckBox) holder.itemView.findViewById(R.id.checkSelected);
         checkSelect.setChecked(fileList.get(position).checked);
-        if(!cf.getName().equals("..")) {
-            checkSelect.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    fileList.get(position).checked = checkSelect.isChecked();
-                }
-            });
-        } else {
+        checkSelect.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                fileList.get(position).checked = checkSelect.isChecked();
+            }
+        });
+
+        /*if(cf.getName().equals("..")) {
             checkSelect.setVisibility(View.INVISIBLE);
-        }
+        }*/
+        if (position == 0)
+            checkSelect.setVisibility(View.INVISIBLE);
+        else
+            checkSelect.setVisibility(View.VISIBLE);
     }
 
     @Override

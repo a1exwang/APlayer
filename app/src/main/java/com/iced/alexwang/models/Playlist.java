@@ -34,7 +34,7 @@ public class Playlist extends ArrayList<Song> implements Serializable, Parcelabl
     }
     public String getUpperFolderPath() {
         String path = get(current).getPath();
-        Pattern pattern = Pattern.compile("(/[^/]*)/[^/]+$");
+        Pattern pattern = Pattern.compile("^(.*)/[^/]+$");
         Matcher matcher = pattern.matcher(path);
         if (matcher.find()) {
             return matcher.group(1);
@@ -116,7 +116,9 @@ public class Playlist extends ArrayList<Song> implements Serializable, Parcelabl
                 oos.write(songBytes);
             }
             oos.close();
-            return bos.toByteArray();
+            byte[] ret = bos.toByteArray();
+            bos.close();
+            return ret;
         } catch (IOException e) {
             e.printStackTrace();
             return null;
@@ -135,9 +137,7 @@ public class Playlist extends ArrayList<Song> implements Serializable, Parcelabl
             for (int i = 0; i < size; ++i) {
                 int songBytesSize = ois.readInt();
                 byte[] songBytes = new byte[songBytesSize];
-                if(-1 == ois.read(songBytes, 0, songBytesSize)) {
-                    return null;
-                }
+                ois.readFully(songBytes, 0, songBytesSize);
                 playlist.add(Song.load(songBytes, 0, songBytesSize));
             }
             playlist.current = current;
