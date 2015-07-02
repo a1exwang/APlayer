@@ -49,7 +49,6 @@
         android:text="Clear"
         android:id="@+id/btnSelectFileUnselectAll"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
         android:layout_alignStart="@+id/btnSelectFileReverse" />
 
     <Button
@@ -57,8 +56,8 @@
         android:layout_height="wrap_content"
         android:text="Inverse"
         android:id="@+id/btnSelectFileReverse"
-        android:layout_above="@+id/btnSelectFileSelectAll"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignTop="@+id/btnSelectFileSortByFileName"
+        android:layout_toEndOf="@+id/btnSelectFileSelectCurrentDirectory" />
 
     <Button
         android:layout_width="wrap_content"
@@ -82,8 +81,8 @@
         android:layout_height="wrap_content"
         android:text="Select"
         android:id="@+id/btnSelectFileSelectCurrentDirectory"
-        android:layout_above="@+id/btnSelectFileUnselectAll"
-        android:layout_toStartOf="@+id/btnSelectFileUnselectAll" />
+        android:layout_below="@+id/listSelectFile"
+        android:layout_toEndOf="@+id/btnSelectFileSortByFileName" />
 
     <com.iced.alexwang.views.select_file.PathNavigationView
         android:layout_width="fill_parent"
