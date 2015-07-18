@@ -53,6 +53,18 @@
             android:name=".ShowPlaylistsActivity"
             android:label="@string/title_activity_show_playlists" >
         </activity>
+        <activity
+            android:name=".TestActivity"
+            android:label="@string/title_activity_test" >
+        </activity>
+        <activity
+            android:name=".LyricsActivity"
+            android:label="@string/title_activity_lyrics" >
+        </activity>
+        <activity
+            android:name=".PlayerControlActivity"
+            android:label="@string/title_activity_player_control" >
+        </activity>
     </application>
 
 </manifest>

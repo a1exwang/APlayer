@@ -45,12 +45,22 @@ public class Song extends Item implements Parcelable, Serializable {
         boolean reverse;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Song) {
+            Song other = (Song) obj;
+            return other.path.equals(path);
+        }
+        return false;
+    }
+
     // to marshal and load
     public byte[] marshal() {
         try {
             byte[] bytesTitle = title.getBytes(Charset.forName("UTF-8"));
             byte[] bytesArtist = artist.marshal();
             byte[] bytesPath = path.getBytes(Charset.forName("UTF-8"));
+            byte[] bytesLyricsFile = lrcPath.getBytes(Charset.forName("UTF-8"));
 
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             ObjectOutputStream oos = new ObjectOutputStream(bos);
@@ -60,6 +70,9 @@ public class Song extends Item implements Parcelable, Serializable {
             oos.write(bytesArtist);
             oos.writeInt(bytesPath.length);
             oos.write(bytesPath);
+            oos.writeInt(bytesLyricsFile.length);
+            oos.write(bytesLyricsFile);
+
             oos.close();
             byte[] ret = bos.toByteArray();
             bos.close();
@@ -90,7 +103,12 @@ public class Song extends Item implements Parcelable, Serializable {
             ois.readFully(bytes, 0, size);
             String path = new String(bytes, Charset.forName("UTF-8"));
 
-            return new Song(title, artist, path);
+            size = ois.readInt();
+            bytes = new byte[size];
+            ois.readFully(bytes, 0, size);
+            String lrcPath = new String(bytes, Charset.forName("UTF-8"));
+
+            return new Song(title, artist, path, lrcPath);
         } catch (IOException e) {
             e.printStackTrace();
             return null;
@@ -111,12 +129,14 @@ public class Song extends Item implements Parcelable, Serializable {
         title = in.readString();
         path = in.readString();
         artist = in.readParcelable(Artist.class.getClassLoader());
+        lrcPath = in.readString();
     }
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(title);
         dest.writeString(path);
         dest.writeParcelable(artist, 0);
+        dest.writeString(lrcPath);
     }
     @Override
     public int describeContents() {
@@ -134,21 +154,36 @@ public class Song extends Item implements Parcelable, Serializable {
         return null;
     }
 
-    public Song(String title, Artist artist, String path) {
+    public Song(String title, Artist artist, String path, String lrcPath) {
         this.title = title;
         this.artist = artist;
         this.path = path;
+        this.lrcPath = lrcPath;
     }
     public static Song createFromCachedFile(CachedFile file) {
-        Matcher matcher = Pattern.compile(patternArtistTitle).matcher(file.getName());
-        if (matcher.matches()) {
-            return new Song(matcher.group(2), new Artist(matcher.group(1)), file.getAbsolutePath());
+        // Seperate the file name and check suffix to make sure it is a music file
+        String suffix = file.getSuffix();
+        String name = file.getNameWithoutSuffix();
+        String lrcFile = file.getParrent().getAbsolutePath() + '/' + name + ".lrc";
+
+        if (patternSuffix.matcher(suffix).matches()) {
+            // Here, it is a music file.
+
+            Matcher matcherArtistAndTitle = patternArtistTitle.matcher(name);
+            if (matcherArtistAndTitle.matches()) {
+                String title = matcherArtistAndTitle.group(2);
+                String artist = matcherArtistAndTitle.group(1);
+                return new Song(title, new Artist(artist), file.getAbsolutePath(), lrcFile);
+            }
+            else
+                return new Song(file.getNameWithoutSuffix(), Artist.Unknown, file.getAbsolutePath(), lrcFile);
         } else {
             return null;
         }
     }
 
-    static final String patternArtistTitle = "^(.*)-(.*)\\.[A-Za-z0-9]+";
+    static final Pattern patternSuffix = Pattern.compile("mp3|m4a|aac|wav|flac|ape|wma", Pattern.CASE_INSENSITIVE);
+    static final Pattern patternArtistTitle = Pattern.compile("^(.*[^ ]) ?- ?([^ ][^-]*)$");
 
     public String getTitle() {
         return title;
@@ -159,8 +194,12 @@ public class Song extends Item implements Parcelable, Serializable {
     public String getPath() {
         return path;
     }
+    public String getLrcPath() {
+        return lrcPath;
+    }
 
     private String title;
     private Artist artist;
     private String path;
+    private String lrcPath;
 }

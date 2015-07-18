@@ -75,6 +75,12 @@
             android:text="Search"
             android:id="@+id/btnSearch" />
 
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Lyrics"
+            android:id="@+id/btnLyrics" />
+
     </LinearLayout>
     <!-- The navigation drawer -->
     <ListView android:id="@+id/left_drawer"

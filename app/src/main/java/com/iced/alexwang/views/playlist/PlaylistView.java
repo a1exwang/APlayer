@@ -13,8 +13,11 @@ import android.widget.RelativeLayout;
 
 import com.iced.alexwang.models.Playlist;
 import com.iced.alexwang.models.Song;
+import com.iced.alexwang.models.callbacks.PlaylistChangedCallback;
 import com.iced.alexwang.player.MusicPlayerHelper;
 import com.iced.alexwang.views.decorator.DividerItemDecoration;
+
+import java.util.Collections;
 
 public class PlaylistView extends RelativeLayout {
     public PlaylistView(Context context) {
@@ -27,19 +30,24 @@ public class PlaylistView extends RelativeLayout {
     }
 
     public void setPlaylist(Playlist playlist) {
+        this.playlist = playlist;
         listAdapter = new PlaylistAdapter(getContext(), playlist);
+        listAdapter.setChangedCallback(songChanged);
         listView.setAdapter(listAdapter);
     }
 
     public void flush() {
+        listAdapter = new PlaylistAdapter(getContext(), playlist);
         listView.setAdapter(listAdapter);
-        listAdapter.notifyDataSetChanged();
+
         MusicPlayerHelper.getInstance(getContext()).setPlaylist(listAdapter.getPlaylist());
         MusicPlayerHelper.getInstance(getContext()).play();
     }
 
     private void createListView() {
         listAdapter = new PlaylistAdapter(getContext(), playlist);
+        listAdapter.setChangedCallback(songChanged);
+
         listView = new RecyclerView(getContext());
         listView.setLayoutManager(new LinearLayoutManager(getContext()));
         listView.setAdapter(listAdapter);
@@ -50,12 +58,12 @@ public class PlaylistView extends RelativeLayout {
 
     // view helpers
     public void sortByTitle() {
-        listAdapter.sort(new Song.TitleComparator(sortReverse));
+        Collections.sort(playlist, new Song.TitleComparator(sortReverse));
         sortReverse = !sortReverse;
         flush();
     }
     public void sortByArtist() {
-        listAdapter.sort(new Song.ArtistComparator(sortReverse));
+        Collections.sort(playlist, new Song.ArtistComparator(sortReverse));
         sortReverse = !sortReverse;
         flush();
     }
@@ -65,9 +73,16 @@ public class PlaylistView extends RelativeLayout {
 
     public void clear() {
         playlist = new Playlist();
-        listAdapter = new PlaylistAdapter(getContext(), playlist);
         flush();
     }
+
+    PlaylistChangedCallback songChanged = new PlaylistChangedCallback() {
+        @Override
+        public void changed(Playlist newPlaylist) {
+            playlist = newPlaylist;
+            flush();
+        }
+    };
 
     boolean sortReverse = false;
 

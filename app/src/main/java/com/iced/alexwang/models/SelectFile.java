@@ -7,7 +7,6 @@ import java.util.Date;
 
 // Data structure for SelectFileAdapter
 public class SelectFile {
-
     public static class SelectFileNameComparator implements Comparator<SelectFile> {
         public SelectFileNameComparator(boolean reverse) {
             this.reverse = reverse;
@@ -26,7 +25,6 @@ public class SelectFile {
 
         boolean reverse;
     }
-
     public static class SelectFileDateComparator implements Comparator<SelectFile> {
         public SelectFileDateComparator(boolean reverse) {this.reverse = reverse; }
 
@@ -46,12 +44,11 @@ public class SelectFile {
         boolean reverse;
     }
 
-
-    public boolean checked;
-    public CachedFile file;
-
     public SelectFile(CachedFile f, boolean c) {
         file = f;
         checked = c;
     }
+
+    public boolean checked;
+    public CachedFile file;
 }

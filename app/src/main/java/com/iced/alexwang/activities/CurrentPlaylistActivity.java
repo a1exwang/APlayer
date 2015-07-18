@@ -52,6 +52,20 @@ public class CurrentPlaylistActivity extends Activity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        if (playlistView != null) {
+            playerHelper.getPlaylist(new PlaylistCallback() {
+                @Override
+                public void onPlaylistReceived(Playlist playlist) {
+                    playlistView.setPlaylist(playlist);
+                    playlistView.flush();
+                }
+            });
+        }
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_current_playlist, menu);

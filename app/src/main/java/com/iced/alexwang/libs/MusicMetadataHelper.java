@@ -2,8 +2,6 @@ package com.iced.alexwang.libs;
 
 import android.media.MediaMetadataRetriever;
 
-import com.iced.alexwang.player.MusicPlayerHelper;
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -15,6 +13,9 @@ public class MusicMetadataHelper {
         } catch(IllegalArgumentException e) {
             return null;
         }
+    }
+    public static MusicMetadataHelper create(CachedFile file) {
+        return create(file.getAbsolutePath());
     }
 
     private MusicMetadataHelper(String path) {

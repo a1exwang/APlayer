@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -50,6 +49,10 @@ public class Playlist extends ArrayList<Song> implements Serializable, Parcelabl
             return null;
         return get(current);
     }
+    public void setCurrent(int i) {
+        if (i >= 0 && i < size())
+            current = i;
+    }
     public Song nextSong() {
         if (size() != 0) {
             current++;
@@ -73,7 +76,6 @@ public class Playlist extends ArrayList<Song> implements Serializable, Parcelabl
     public int describeContents() {
         return 0;
     }
-
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeInt(size());
@@ -92,7 +94,6 @@ public class Playlist extends ArrayList<Song> implements Serializable, Parcelabl
             return new Playlist[size];
         }
     };
-
     private Playlist(Parcel in) {
         int size = in.readInt();
         for(int i = 0; i < size; ++i) {
@@ -146,6 +147,22 @@ public class Playlist extends ArrayList<Song> implements Serializable, Parcelabl
         } catch (IOException e) {
             e.printStackTrace();
             return null;
+        }
+    }
+
+    /* for comparison */
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Playlist) {
+            Playlist playlist = (Playlist) obj;
+            for (int i = 0; i < playlist.size(); ++i) {
+                if (get(i).getPath().equals(playlist.get(i).getPath())) {
+                    return false;
+                }
+            }
+            return true;
+        } else {
+            return false;
         }
     }
 

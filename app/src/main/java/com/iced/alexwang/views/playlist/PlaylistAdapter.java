@@ -1,8 +1,6 @@
 package com.iced.alexwang.views.playlist;
 
 import android.app.AlertDialog;
-import android.app.Notification;
-import android.app.NotificationManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -11,7 +9,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.iced.alexwang.activities.MusicDetailsActivity;
@@ -19,11 +16,8 @@ import com.iced.alexwang.activities.R;
 import com.iced.alexwang.activities.SearchActivity;
 import com.iced.alexwang.models.Playlist;
 import com.iced.alexwang.models.Song;
-import com.iced.alexwang.models.callbacks.RemoveSongCallback;
+import com.iced.alexwang.models.callbacks.PlaylistChangedCallback;
 import com.iced.alexwang.player.MusicPlayerHelper;
-
-import java.util.Collections;
-import java.util.Comparator;
 
 public class PlaylistAdapter extends RecyclerView.Adapter {
 
@@ -46,7 +40,7 @@ public class PlaylistAdapter extends RecyclerView.Adapter {
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
-        ViewGroup convertView = (ViewGroup) LayoutInflater.from(getContext()).inflate(R.layout.playlist_item, viewGroup, false);
+        ViewGroup convertView = (ViewGroup) LayoutInflater.from(getContext()).inflate(R.layout.item_playlist, viewGroup, false);
         return new PlaylistViewHolder(convertView);
     }
 
@@ -78,10 +72,6 @@ public class PlaylistAdapter extends RecyclerView.Adapter {
         return playlist.get(position);
     }
 
-    public void sort(Comparator<Song> com) {
-        Collections.sort(playlist, com);
-    }
-
     public void add(Song song) {
         playlist.add(song);
     }
@@ -94,8 +84,8 @@ public class PlaylistAdapter extends RecyclerView.Adapter {
         playlist.remove(index);
     }
 
-    public void setRemoveCallback(RemoveSongCallback c) {
-        removeCallback = c;
+    public void setChangedCallback(PlaylistChangedCallback c) {
+        changed = c;
     }
 
     public Playlist getPlaylist() {
@@ -136,9 +126,9 @@ public class PlaylistAdapter extends RecyclerView.Adapter {
                                 helper.playAt(position);
                                 break;
                             case 1:
-                                if (removeCallback != null)
-                                    removeCallback.remove(position);
                                 playlist.remove(position);
+                                if (changed != null)
+                                    changed.changed(playlist);
                                 break;
                             case 2:
                                 Intent intent = new Intent(getContext(), MusicDetailsActivity.class);
@@ -188,5 +178,5 @@ public class PlaylistAdapter extends RecyclerView.Adapter {
     Context context;
     Playlist playlist;
 
-    RemoveSongCallback removeCallback;
+    PlaylistChangedCallback changed;
 }

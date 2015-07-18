@@ -5,16 +5,77 @@ import android.content.Intent;
 import android.os.Parcelable;
 
 import com.iced.alexwang.activities.R;
-import com.iced.alexwang.models.callbacks.ParameterizedRunnable;
 import com.iced.alexwang.models.Playlist;
+import com.iced.alexwang.models.Song;
+import com.iced.alexwang.models.callbacks.CurrentStatusCallback;
+import com.iced.alexwang.models.callbacks.ParameterizedRunnable;
 import com.iced.alexwang.models.callbacks.PlaylistCallback;
 import com.iced.alexwang.models.callbacks.PositionCallback;
+import com.iced.alexwang.models.callbacks.SongChangedCallback;
 import com.iced.alexwang.models.callbacks.VolumeCallback;
+
+import java.util.ArrayList;
 
 public class MusicPlayerHelper {
 
     private MusicPlayerHelper(Context c) {
         context = c;
+
+        // get playlist
+        PlayerBroadcastReceiver.register(context.getString(R.string.player_service_op_get_playlist), new ParameterizedRunnable() {
+            @Override
+            public Object run(Object obj) {
+                Intent intent = (Intent) ((Object[]) obj)[1];
+                Playlist playlist = intent.getParcelableExtra(context.getString(R.string.player_service_data_playlist));
+                if (playlistCallback != null) {
+                    playlistCallback.onPlaylistReceived(playlist);
+                    playlistCallback = null;
+                }
+                return null;
+            }
+        });
+
+        // get position
+        PlayerBroadcastReceiver.register(context.getString(R.string.player_service_op_get_current_pos), new ParameterizedRunnable() {
+            @Override
+            public Object run(Object obj) {
+                Intent intent = (Intent) ((Object[])obj)[1];
+                int pos = intent.getIntExtra(context.getString(R.string.player_service_data_current_pos), 0);
+                int total = intent.getIntExtra(context.getString(R.string.player_service_data_total_time), 1);
+                if (positionCallback != null) {
+                    positionCallback.run(pos, total);
+                    positionCallback = null;
+                }
+                return null;
+            }
+        });
+
+        // get volume
+        PlayerBroadcastReceiver.register(context.getString(R.string.player_service_op_get_volume), new ParameterizedRunnable() {
+            @Override
+            public Object run(Object obj) {
+                Intent intent = (Intent) ((Object[])obj)[1];
+                float vol = intent.getFloatExtra(context.getString(R.string.player_service_data_volume), 0);
+                if (volumeCallback != null) {
+                    volumeCallback.run(vol);
+                    volumeCallback = null;
+                }
+                return null;
+            }
+        });
+
+        // play next song
+        PlayerBroadcastReceiver.register(context.getString(R.string.player_service_op_next), new ParameterizedRunnable() {
+            @Override
+            public Object run(Object obj) {
+                Intent intent = (Intent) ((Object[])obj)[1];
+                Song song = intent.getParcelableExtra(context.getString(R.string.player_service_data_song));
+                for (SongChangedCallback cb : nextSongCallbacks) {
+                    cb.songChanged(song);
+                }
+                return null;
+            }
+        });
     }
     private static MusicPlayerHelper theInstance;
     public static MusicPlayerHelper getInstance(Context c) {
@@ -26,7 +87,6 @@ public class MusicPlayerHelper {
             return theInstance;
         }
     }
-
     public void setPlaylist(Playlist playlist) {
         Intent intent = new Intent(context, MusicPlayerService.class);
         intent.putExtra(context.getString(R.string.player_service_operation), context.getString(R.string.player_service_op_set_playlist));
@@ -92,51 +152,44 @@ public class MusicPlayerHelper {
     }
 
     public void getVolume(final VolumeCallback callback) {
-        PlayerBroadcastReceiver.register(new ParameterizedRunnable() {
-            @Override
-            public Object run(Object obj) {
-                Intent intent = (Intent) ((Object[])obj)[1];
-                float vol = intent.getFloatExtra(context.getString(R.string.player_service_data_volume), 0);
-                callback.run(vol);
-                return null;
-            }
-        });
-
+        volumeCallback = callback;
         Intent intent = new Intent(context, MusicPlayerService.class);
         intent.putExtra(context.getString(R.string.player_service_operation), context.getString(R.string.player_service_op_get_volume));
         context.startService(intent);
     }
     public void getPosition(final PositionCallback callback) {
-
-        PlayerBroadcastReceiver.register(new ParameterizedRunnable() {
-            @Override
-            public Object run(Object obj) {
-                Intent intent = (Intent) ((Object[])obj)[1];
-                int pos = intent.getIntExtra(context.getString(R.string.player_service_data_current_pos), 0);
-                callback.run(pos);
-                return null;
-            }
-        });
-
+        positionCallback = callback;
         Intent intent = new Intent(context, MusicPlayerService.class);
         intent.putExtra(context.getString(R.string.player_service_operation), context.getString(R.string.player_service_op_get_current_pos));
         context.startService(intent);
     }
     public void getPlaylist(final PlaylistCallback callback) {
-        PlayerBroadcastReceiver.register(new ParameterizedRunnable() {
-            @Override
-            public Object run(Object obj) {
-                Intent intent = (Intent) ((Object[]) obj)[1];
-                Playlist playlist = intent.getParcelableExtra(context.getString(R.string.player_service_data_playlist));
-                callback.onPlaylistReceived(playlist);
-                return null;
-            }
-        });
-
+        playlistCallback = callback;
         Intent intent = new Intent(context, MusicPlayerService.class);
         intent.putExtra(context.getString(R.string.player_service_operation), context.getString(R.string.player_service_op_get_playlist));
         context.startService(intent);
     }
+    public void getCurrentStatus(CurrentStatusCallback callback) {
+        currentStatusCallback = callback;
+        Intent intent = new Intent(context, MusicPlayerService.class);
+        intent.putExtra(context.getString(R.string.player_service_operation), context.getString(R.string.player_service_op_get_player_status));
+        context.startService(intent);
+    }
+    public void addNextSongCallback(SongChangedCallback cb) {
+        if (!nextSongCallbacks.contains(cb))
+            nextSongCallbacks.add(cb);
+    }
+    public void removeNextSongCallback(SongChangedCallback cb) {
+        if (nextSongCallbacks.contains(cb)) {
+            nextSongCallbacks.remove(cb);
+        }
+    }
+
+    PlaylistCallback playlistCallback;
+    PositionCallback positionCallback;
+    VolumeCallback volumeCallback;
+    CurrentStatusCallback currentStatusCallback;
+    ArrayList<SongChangedCallback> nextSongCallbacks = new ArrayList<>();
 
     private Context context;
 }

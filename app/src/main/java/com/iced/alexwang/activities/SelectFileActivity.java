@@ -13,8 +13,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.widget.RelativeLayout;
 
 import com.iced.alexwang.libs.CachedFile;
@@ -66,7 +64,10 @@ public class SelectFileActivity extends Activity {
                         for (CachedFile f : files) {
                             // check whether it's a valid music file.
                             if (Pattern.compile(getString(R.string.select_file_supported_files)).matcher(f.getName()).matches()) {
-                                playlist.add(Song.createFromCachedFile(f));
+                                Song song = Song.createFromCachedFile(f);
+                                if (song != null) {
+                                    playlist.add(song);
+                                }
                             }
                         }
                         playerHelper.setPlaylist(playlist);
@@ -87,28 +88,6 @@ public class SelectFileActivity extends Activity {
     protected void onStop() {
         super.onStop();
         save();
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        super.onCreateOptionsMenu(menu);
-        getMenuInflater().inflate(R.menu.menu_select_file, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-
-        if (id == R.id.menu_select_file_sort_by_file_name) {
-            selectFileView.sortByFileName();
-        } else if (id == R.id.menu_select_file_sort_by_artist) {
-
-        } else if (id == R.id.menu_select_file_sort_by_date) {
-
-        }
-
-        return super.onOptionsItemSelected(item);
     }
 
     public void save() {

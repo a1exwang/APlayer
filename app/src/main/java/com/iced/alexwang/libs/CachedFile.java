@@ -1,29 +1,17 @@
 package com.iced.alexwang.libs;
 
 import android.os.Environment;
-import android.os.Parcel;
-import android.os.Parcelable;
 
-import com.iced.alexwang.models.Song;
 import com.iced.alexwang.models.callbacks.Marshalable;
-import com.iced.alexwang.models.callbacks.ParameterizedRunnable;
 
-import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.OutputStreamWriter;
-import java.io.Serializable;
-import java.io.StreamCorruptedException;
 import java.nio.charset.Charset;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -121,16 +109,41 @@ public class CachedFile implements Marshalable {
     }
 
     public String getName() {
+        if(getAbsolutePath().equals("/"))
+            return "/";
+
         Pattern pattern = Pattern.compile(".*/([^/]*)$");
         Matcher matcher = pattern.matcher(absolutePath);
         if (matcher.matches()) {
-            if(matcher.group(1).equals("/"))
-                return "/";
-            else
-                return matcher.group(1);
+            return matcher.group(1);
         } else {
             return null;
         }
+    }
+
+    public String getNameWithoutSuffix() {
+        if(getAbsolutePath().equals("/"))
+            return "/";
+        Pattern pattern = Pattern.compile(".*/([^/]*)\\.[^.]*$");
+        Matcher matcher = pattern.matcher(absolutePath);
+        if (matcher.find())
+            return matcher.group(1);
+        else {
+            Pattern patternUndotted = Pattern.compile(".*/([^/]*)$");
+            matcher = patternUndotted.matcher(absolutePath);
+            if (matcher.find())
+                return matcher.group(1);
+            else
+                return null;
+        }
+    }
+
+    public String getSuffix() {
+        Matcher matcher = Pattern.compile("^.*\\.([^.]+)$").matcher(getName());
+        if (matcher.matches()) {
+            return matcher.group(1);
+        } else
+            return "";
     }
 
     public Date getLastModifiedDate() {

@@ -19,15 +19,12 @@ import com.iced.alexwang.player.MusicPlayerHelper;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
- * Created by alexwang on 15-6-30.
- */
 public class PlaylistListAdapter extends RecyclerView.Adapter<PlaylistListAdapter.PlaylistListViewHolder> {
 
     static class PlaylistListViewHolder extends RecyclerView.ViewHolder {
 
         public PlaylistListViewHolder(ViewGroup parent, Context context) {
-            super(LayoutInflater.from(context).inflate(R.layout.playlist_list_item, null));
+            super(LayoutInflater.from(context).inflate(R.layout.item_playlist_list, null));
             textPlaylistName = (TextView) itemView.findViewById(R.id.textPlaylistListItemName);
             textPlaylistPath = (TextView) itemView.findViewById(R.id.textPlaylistListItemPath);
             textPlaylistName.setOnClickListener(clickTitle);
@@ -66,7 +63,6 @@ public class PlaylistListAdapter extends RecyclerView.Adapter<PlaylistListAdapte
         PlayCurrentListCallback playCurrentCallback;
         TextView textPlaylistName, textPlaylistPath;
     }
-
 
     public PlaylistListAdapter(Context context, PlaylistList playlists) {
         this.context = context;

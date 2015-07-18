@@ -2,19 +2,16 @@ package com.iced.alexwang.player;
 
 import android.app.Service;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.media.AudioManager;
 import android.media.MediaPlayer;
-import android.os.Binder;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.renderscript.RSInvalidStateException;
 import android.widget.Toast;
 
 import com.iced.alexwang.activities.R;
+import com.iced.alexwang.models.PlayerStatus;
 import com.iced.alexwang.models.Playlist;
+import com.iced.alexwang.models.Song;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 
 public class MusicPlayerService extends Service implements MediaPlayer.OnCompletionListener, MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener {
@@ -74,14 +71,16 @@ public class MusicPlayerService extends Service implements MediaPlayer.OnComplet
             float delta = intent.getFloatExtra(getString(R.string.player_service_data_volume), 0);
             onModifyVolume(delta);
         }
+        else if(op.equals(getString(R.string.player_service_op_get_volume)))
+            onGetCurrentVolume();
         else if(op.equals(getString(R.string.player_service_op_set_playlist)))
-            onSetPlaylist((Playlist)intent.getParcelableExtra(getString(R.string.player_service_data_playlist)));
+            onSetPlaylist((Playlist) intent.getParcelableExtra(getString(R.string.player_service_data_playlist)));
         else if(op.equals(getString(R.string.player_service_op_toggle_loop)))
             onToggleLoop();
         else if(op.equals(getString(R.string.player_service_op_get_current_pos)))
             onGetCurrentPos();
-        else if(op.equals(getString(R.string.player_service_op_get_volume)))
-            onGetCurrentVolume();
+        else if(op.equals(getString(R.string.player_service_op_get_player_status)))
+            onGetCurrentPlayerStatus();
         else if(op.equals(getString(R.string.player_service_op_get_playlist)))
             onGetPlaylist();
 
@@ -91,9 +90,11 @@ public class MusicPlayerService extends Service implements MediaPlayer.OnComplet
     @Override
     public void onDestroy() {
         // Tell the user we stopped.
-        player.release();
-        player = null;
-        Toast.makeText(this, "Player Service Stopped", Toast.LENGTH_SHORT).show();
+        if (playlist != null) {
+            player.release();
+            player = null;
+            Toast.makeText(this, "Player Service Stopped", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
@@ -102,6 +103,10 @@ public class MusicPlayerService extends Service implements MediaPlayer.OnComplet
             mp.start();
         } else {
             onNext();
+            Song song = playlist.getCurrentSong();
+            Bundle bundle = new Bundle();
+            bundle.putParcelable(getString(R.string.player_service_data_song), song);
+            callBack(R.string.player_service_op_next, bundle);
         }
     }
 
@@ -117,7 +122,7 @@ public class MusicPlayerService extends Service implements MediaPlayer.OnComplet
     }
 
     public void onPlay(int index) {
-        if(index >= 0 && index < playlist.size()){
+        if(index >= 0 && playlist != null && index < playlist.size()){
             try {
                 tryCreate();
                 player.reset();
@@ -130,9 +135,11 @@ public class MusicPlayerService extends Service implements MediaPlayer.OnComplet
         }
     }
     public void onStop() {
-        player.stop();
-        player.release();
-        player = null;
+        if (player != null) {
+            player.stop();
+            player.release();
+            player = null;
+        }
     }
     public void onToggle() {
         tryCreate();
@@ -198,8 +205,19 @@ public class MusicPlayerService extends Service implements MediaPlayer.OnComplet
     }
     public void onSetPlaylist(Playlist playlist) {
         if (playlist != null) {
+            Song currentSong = playlist.getCurrentSong();
+            boolean found = false;
+            for (int i = 0; i < playlist.size(); ++i) {
+                if (playlist.get(i).getPath().equals(currentSong.getPath())) {
+                    playlist.setCurrent(i);
+                    found = true;
+                    break;
+                }
+            }
             this.playlist = playlist;
-            tryCreate();
+            if (!found) {
+                tryCreate();
+            }
         } else {
             this.playlist = new Playlist();
             tryCreate();
@@ -207,16 +225,17 @@ public class MusicPlayerService extends Service implements MediaPlayer.OnComplet
     }
 
     public void onGetCurrentPos() {
-        if (playlist != null) {
+        if (player != null && playlist != null) {
             Bundle bundle = new Bundle();
             bundle.putInt(getString(R.string.player_service_data_current_pos), player.getCurrentPosition());
+            bundle.putInt(getString(R.string.player_service_data_total_time), player.getDuration());
             callBack(R.string.player_service_op_get_current_pos, bundle);
         }
     }
     public void onGetCurrentVolume() {
         Bundle bundle = new Bundle();
         bundle.putFloat(getString(R.string.player_service_data_volume), volume);
-        callBack(R.string.player_service_op_get_current_pos, bundle);
+        callBack(R.string.player_service_op_get_volume, bundle);
     }
     public void onGetPlaylist() {
         if (playlist != null) {
@@ -225,17 +244,27 @@ public class MusicPlayerService extends Service implements MediaPlayer.OnComplet
             callBack(R.string.player_service_op_get_playlist, bundle);
         }
     }
+    public void onGetCurrentPlayerStatus() {
+        Bundle bundle = new Bundle();
+        bundle.putString(getString(R.string.player_service_data_player_status), status.toString());
+        callBack(R.string.player_service_data_player_status, bundle);
+    }
 
     // return value to caller
+    private void callBack(int opResId) {
+        callBack(opResId, null);
+    }
     private void callBack(int opResId, Bundle data) {
         Intent intent = new Intent();
         intent.setAction(getString(R.string.player_service_intent_call_back));
         intent.putExtra(getString(R.string.player_service_operation), getString(opResId));
-        intent.putExtras(data);
+        if (data != null)
+            intent.putExtras(data);
         getApplicationContext().sendBroadcast(intent);
     }
 
     float volume = 0.8f;
     MediaPlayer player;
     Playlist playlist;
+    PlayerStatus status = PlayerStatus.Stopped;
 }

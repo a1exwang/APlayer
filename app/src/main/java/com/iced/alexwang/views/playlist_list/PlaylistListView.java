@@ -19,8 +19,6 @@ import com.iced.alexwang.models.PlaylistList;
 import com.iced.alexwang.models.Song;
 import com.iced.alexwang.models.callbacks.FilesSelectedCallback;
 import com.iced.alexwang.models.callbacks.FlushCallback;
-import com.iced.alexwang.models.callbacks.PlaylistCallback;
-import com.iced.alexwang.player.MusicPlayerHelper;
 import com.iced.alexwang.views.decorator.DividerItemDecoration;
 import com.iced.alexwang.views.select_file.SelectFileView;
 
@@ -106,7 +104,9 @@ public class PlaylistListView extends RelativeLayout {
                     public boolean filesSelected(ArrayList<CachedFile> files) {
                         Playlist playlist = new Playlist();
                         for (CachedFile f : files) {
-                            playlist.add(Song.createFromCachedFile(f));
+                            Song song = Song.createFromCachedFile(f);
+                            if (song != null)
+                                playlist.add(song);
                         }
                         listAdapter.addPlaylist(playlist);
                         flush();

@@ -3,8 +3,6 @@ package com.iced.alexwang.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.iced.alexwang.libs.MarshalHelper;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -13,9 +11,6 @@ import java.io.ObjectOutputStream;
 import java.nio.charset.Charset;
 import java.util.Comparator;
 
-/**
- * Created by alexwang on 15-6-14.
- */
 public class Artist implements Parcelable {
 
     public static class ArtistNameComparator implements Comparator<Artist> {
@@ -29,6 +24,20 @@ public class Artist implements Parcelable {
             return reverse ? rhs.name.compareToIgnoreCase(lhs.name) : lhs.name.compareToIgnoreCase(rhs.name);
         }
         private boolean reverse;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Artist) {
+            Artist other = (Artist) obj;
+            return other.name.equalsIgnoreCase(name);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return name.hashCode();
     }
 
     // for marshal and load
@@ -101,6 +110,7 @@ public class Artist implements Parcelable {
         this.name = name;
         this.type = "";
     }
+    public static Artist Unknown = new Artist("Unknown");
 
     public String getName() {
         return name;

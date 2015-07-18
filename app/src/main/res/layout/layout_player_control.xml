@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <SeekBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/seekBarProgress"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="85dp"
+        android:layout_alignParentEnd="true"
+        android:max="100"
+        android:indeterminate="false" />
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/imageBtnLast"
+        android:layout_above="@+id/seekBarProgress"
+        android:layout_alignParentStart="true"
+        android:src="@drawable/ic_fast_rewind_black_24dp"
+        android:background="#00000000" />
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/imageBtnNext"
+        android:layout_alignBottom="@+id/imageBtnLast"
+        android:layout_toEndOf="@+id/imageBtnLast"
+        android:src="@drawable/ic_fast_forward_black_24dp"
+        android:background="#00000000" />
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/imageBtnPlay"
+        android:layout_alignBottom="@+id/imageBtnNext"
+        android:layout_toEndOf="@+id/imageBtnNext"
+        android:src="@drawable/ic_play_arrow_black_24dp"
+        android:background="#00000000" />
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/imageBtnStop"
+        android:layout_alignBottom="@+id/imageBtnPlay"
+        android:layout_toEndOf="@+id/imageBtnPlay"
+        android:src="@drawable/ic_stop_black_24dp"
+        android:background="#00000000" />
+
+    <view
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        class="com.iced.alexwang.views.lyrics.LyricsView"
+        android:id="@+id/lyricsViewPlayerControl"
+        android:layout_below="@+id/textPlayerControlArtist"
+        android:layout_alignEnd="@+id/textCurrentTime"
+        android:layout_above="@+id/imageBtnLast"
+        android:layout_alignParentStart="true"
+        android:paddingLeft="12dp"
+        android:paddingRight="12dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="00:00.00"
+        android:id="@+id/textCurrentTime"
+        android:layout_above="@+id/seekBarProgress"
+        android:layout_alignParentEnd="true"
+        android:layout_toEndOf="@+id/imageBtnStop"
+        android:gravity="right"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp" />
+
+    <SeekBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/seekBarVolume"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_toEndOf="@+id/imageBtnStop"
+        android:layout_alignParentStart="true"
+        android:indeterminate="false" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Title"
+        android:id="@+id/textPlayerControlTitle"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:paddingLeft="12dp"
+        android:paddingRight="12dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Artist"
+        android:id="@+id/textPlayerControlArtist"
+        android:layout_below="@+id/textPlayerControlTitle"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:paddingLeft="12dp"
+        android:paddingRight="12dp" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/imageView"
+        android:layout_above="@+id/seekBarVolume"
+        android:layout_alignParentStart="true"
+        android:src="@drawable/ic_volume_up_black_24dp" />
+</RelativeLayout>

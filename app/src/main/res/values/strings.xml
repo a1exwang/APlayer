@@ -20,6 +20,7 @@
     <string name="search_data_item">SearchItem</string>
     <string name="search_data_item_title">SearchItemTitle</string>
     <string name="search_data_item_artist">SearchItemArtist</string>
+    <string name="search_data_item_playlist">SearchItemPlaylist</string>
     <string name="search_data_content">SearchContent</string>
 
     <!-- details activity -->
@@ -41,10 +42,14 @@
     <string name="player_service_data_volume">PlayerServiceDataVolume</string>
     <string name="player_service_op_seek_to">PlayerServiceOpSeekTo</string>
     <string name="player_service_data_seek_to">PlayerServiceDataSeekTo</string>
+    <string name="player_service_data_song">PlayerServiceDataSong</string>
     <string name="player_service_op_get_current_pos">PlayerServiceOpGetCurrentPos</string>
     <string name="player_service_data_current_pos">PlayerServiceDataCurrentPos</string>
+    <string name="player_service_data_total_time">PlayerServiceDataTotalTime</string>
     <string name="player_service_op_toggle_loop">PlayerServiceOpToggleLoop</string>
     <string name="player_service_op_get_playlist">PlayerServiceOpGetPlaylist</string>
+    <string name="player_service_data_player_status">PlayerServiceDataPlayerStatus</string>
+    <string name="player_service_op_get_player_status">PlayerServiceOpGetPlayerStatus</string>
     <string name="player_service_intent_call_back">com.iced.alexwang.aplayer.MusicPlayerCallbackBroadcast</string>
     <string name="title_activity_select_file">SelectFileActivity</string>
 
@@ -52,11 +57,18 @@
     <string name="select_file_initial_directory">SelectFileInitialDirectory</string>
     <string name="select_file_supported_files">.*\.((mp3)|(m4a)|(wav)|(flac)|(ape)|(aac))</string>
 
+    <!-- Search File Activity -->
+    <string name="search_artist">SearchArtist</string>
+    <string name="search_song">SearchSong</string>
+    <string name="search_time_period">SearchTimePeriod</string>
+    <string name="search_all">SearchAll</string>
+
     <!-- menu -->
     <string name="sort_by_title">Sort By Title</string>
     <string name="sort_by_date">Sort By Date</string>
     <string name="sort_by_artist">Sort By Artist</string>
     <string name="sort_by_file_name">Sort By File Name</string>
+    <string name="sort_by_additional">Sort By Additional</string>
     <string name="title_activity_current_playlist">CurrentPlaylistActivity</string>
 
     <!-- cached files -->
@@ -69,5 +81,8 @@
     <string name="kilo_bit_rate_unit">Kbps</string>
     <string name="title_activity_show_playlists">ShowPlaylistsActivity</string>
     <string name="sdcard_name">SDCard</string>
+    <string name="title_activity_test">TestActivity</string>
+    <string name="title_activity_lyrics">LyricsActivity</string>
+    <string name="title_activity_player_control">PlayerControlActivity</string>
 
 </resources>
