@@ -10,7 +10,8 @@
         android:id="@+id/textSearchResultTitle"
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true"
-        android:layout_toStartOf="@+id/textSearchResultAdditionalInfo" />
+        android:layout_toStartOf="@+id/textSearchResultAdditionalInfo"
+        android:textSize="25dp" />
 
     <TextView
         android:layout_width="wrap_content"

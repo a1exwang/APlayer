@@ -133,7 +133,7 @@ public class PlayerControlView extends RelativeLayout {
                 });
 
             }
-        }, 0, 1000);
+        }, 0, 1000 / progressUpdatingFreq);
 
     }
 
@@ -153,4 +153,5 @@ public class PlayerControlView extends RelativeLayout {
 
     MusicPlayerHelper playerHelper;
     Timer timer;
+    int progressUpdatingFreq = 20; // per second
 }

@@ -10,17 +10,20 @@ package com.iced.alexwang.activities;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.iced.alexwang.views.control.PlayerControlView;
+import com.iced.alexwang.views.main.LeftDrawerAdapter;
+import com.iced.alexwang.views.main.ViewHelper;
 
 public class PlayerControlActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_player_control);
+        setContentView(ViewHelper.getDrawerLayout(this, LayoutInflater.from(this).inflate(R.layout.activity_player_control, null), new LeftDrawerAdapter(this, 0)));
         controlView = (PlayerControlView) findViewById(R.id.layoutPlayerControlMain);
     }
 

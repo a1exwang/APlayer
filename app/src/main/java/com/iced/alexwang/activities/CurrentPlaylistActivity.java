@@ -3,6 +3,7 @@ package com.iced.alexwang.activities;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -12,13 +13,15 @@ import android.widget.RelativeLayout;
 import com.iced.alexwang.models.Playlist;
 import com.iced.alexwang.models.callbacks.PlaylistCallback;
 import com.iced.alexwang.player.MusicPlayerHelper;
+import com.iced.alexwang.views.main.LeftDrawerAdapter;
+import com.iced.alexwang.views.main.ViewHelper;
 import com.iced.alexwang.views.playlist.PlaylistView;
 
 public class CurrentPlaylistActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_current_playlist);
+        setContentView(ViewHelper.getDrawerLayout(this, LayoutInflater.from(this).inflate(R.layout.activity_current_playlist, null), new LeftDrawerAdapter(this, 1)));
 
         layoutPlaylist = (RelativeLayout) findViewById(R.id.layoutContainingPlaylist);
 

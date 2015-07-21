@@ -45,7 +45,12 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapte
         SearchResult result = results.get(position);
         holder.textTitle.setText(result.getTitle());
         holder.textTitle.setOnClickListener(result.getOnClickListener());
+        holder.textTitle.setTextColor(result.getTitleColor());
+        holder.textTitle.setTextSize(result.getTitleFontSize());
+
         holder.textAdditional.setText(result.getAdditional());
+        holder.textAdditional.setTextColor(result.getAdditionalColor());
+        holder.textAdditional.setTextSize(result.getAdditionallFontSize());
     }
 
     @Override

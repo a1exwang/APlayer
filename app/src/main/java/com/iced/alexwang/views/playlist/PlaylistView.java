@@ -40,11 +40,13 @@ public class PlaylistView extends RelativeLayout {
         listAdapter = new PlaylistAdapter(getContext(), playlist);
         listView.setAdapter(listAdapter);
 
-        MusicPlayerHelper.getInstance(getContext()).setPlaylist(listAdapter.getPlaylist());
-        MusicPlayerHelper.getInstance(getContext()).play();
+        playerHelper.setPlaylist(playlist, false);
+        //MusicPlayerHelper.getInstance(getContext()).setPlaylist(listAdapter.getPlaylist());
+        //MusicPlayerHelper.getInstance(getContext()).play();
     }
 
     private void createListView() {
+        playerHelper = MusicPlayerHelper.getInstance(getContext());
         listAdapter = new PlaylistAdapter(getContext(), playlist);
         listAdapter.setChangedCallback(songChanged);
 
@@ -86,6 +88,7 @@ public class PlaylistView extends RelativeLayout {
 
     boolean sortReverse = false;
 
+    MusicPlayerHelper playerHelper;
     RecyclerView listView;
     PlaylistAdapter listAdapter;
     Playlist playlist = new Playlist();

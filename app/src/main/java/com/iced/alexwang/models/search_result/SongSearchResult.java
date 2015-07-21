@@ -34,5 +34,10 @@ public class SongSearchResult extends SearchResult {
         return song.getArtist().getName();
     }
 
+    @Override
+    public int getTypeWeight() {
+        return 10;
+    }
+
     Song song;
 }

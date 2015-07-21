@@ -88,9 +88,15 @@ public class MusicPlayerHelper {
         }
     }
     public void setPlaylist(Playlist playlist) {
+        setPlaylist(playlist, true);
+    }
+    public void setPlaylist(Playlist playlist, boolean pause) {
         Intent intent = new Intent(context, MusicPlayerService.class);
         intent.putExtra(context.getString(R.string.player_service_operation), context.getString(R.string.player_service_op_set_playlist));
         intent.putExtra(context.getString(R.string.player_service_data_playlist), (Parcelable)playlist);
+        if (!pause) {
+            intent.putExtra(context.getString(R.string.player_service_data_no_pause), true);
+        }
         context.startService(intent);
     }
     public void play() {

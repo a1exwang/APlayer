@@ -13,15 +13,19 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
+import android.view.LayoutInflater;
 import android.widget.RelativeLayout;
 
 import com.iced.alexwang.libs.CachedFile;
 import com.iced.alexwang.libs.CachedFileSystem;
 import com.iced.alexwang.models.Playlist;
 import com.iced.alexwang.models.Song;
+import com.iced.alexwang.models.callbacks.CurrentDirectoryChangedCallback;
 import com.iced.alexwang.models.callbacks.FilesSelectedCallback;
 import com.iced.alexwang.models.callbacks.PlaylistCallback;
 import com.iced.alexwang.player.MusicPlayerHelper;
+import com.iced.alexwang.views.main.LeftDrawerAdapter;
+import com.iced.alexwang.views.main.ViewHelper;
 import com.iced.alexwang.views.select_file.SelectFileView;
 
 import java.io.File;
@@ -40,8 +44,7 @@ public class SelectFileActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_select_file);
-
+        setContentView(ViewHelper.getDrawerLayout(this, LayoutInflater.from(this).inflate(R.layout.activity_select_file, null), new LeftDrawerAdapter(this, 3)));
         playerHelper = MusicPlayerHelper.getInstance(this);
 
         Intent intent = getIntent();
@@ -74,6 +77,15 @@ public class SelectFileActivity extends Activity {
                     }
                 });
                 return false;
+            }
+        });
+        selectFileView.setDirectoryChangedCallback(new CurrentDirectoryChangedCallback() {
+            @Override
+            public void directoryChanged(CachedFile current) {
+                Intent intent = new Intent();
+                intent.putExtra(getString(R.string.select_file_current_directory), current.getAbsolutePath());
+                setResult(0, intent);
+                finish();
             }
         });
     }

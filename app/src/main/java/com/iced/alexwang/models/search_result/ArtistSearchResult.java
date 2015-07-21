@@ -67,6 +67,12 @@ public class ArtistSearchResult extends SearchResult {
     public String getAdditional() {
         return String.valueOf(songs.size());
     }
+
+    @Override
+    protected int getTypeWeight() {
+        return 20;
+    }
+
     public int getSongsSize() {
         return songs.size();
     }

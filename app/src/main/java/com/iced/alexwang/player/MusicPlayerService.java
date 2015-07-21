@@ -1,8 +1,11 @@
 package com.iced.alexwang.player;
 
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.media.MediaPlayer;
+import android.media.session.MediaSession;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.widget.Toast;
@@ -33,11 +36,41 @@ public class MusicPlayerService extends Service implements MediaPlayer.OnComplet
         player.setOnErrorListener(this);
         player.setOnPreparedListener(this);
         player.setVolume(volume, volume);
+        registerHeadsetAndMediaButtonReceivers();
     }
     public void tryCreate() {
         if (player == null) {
+            onDestroy();
             onCreate();
         }
+    }
+
+    void registerHeadsetAndMediaButtonReceivers() {
+        mediaButtonReceiver = new MediaButtonReceiver();
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(Intent.ACTION_MEDIA_BUTTON);
+        intentFilter.addAction(Intent.ACTION_HEADSET_PLUG);
+        registerReceiver(mediaButtonReceiver, intentFilter);
+
+        session = new MediaSession(this, "com.iced.aplayer.MusicPlayerService");
+        Intent intent = new Intent(this, MusicPlayerService.class);
+        intent.putExtra(getString(R.string.player_service_operation), getString(R.string.player_service_op_toggle));
+        PendingIntent pIntent = PendingIntent.getService(this, 1, intent, 0);
+        session.setMediaButtonReceiver(pIntent);
+    }
+    void unregisterHeadsetAndMediaButtonReceivers() {
+        unregisterReceiver(mediaButtonReceiver);
+    }
+
+    @Override
+    public void onDestroy() {
+        // Tell the user we stopped.
+        if (playlist != null) {
+            player.release();
+            player = null;
+            Toast.makeText(this, "Player Service Stopped", Toast.LENGTH_SHORT).show();
+        }
+        unregisterHeadsetAndMediaButtonReceivers();
     }
 
     @Override
@@ -74,7 +107,7 @@ public class MusicPlayerService extends Service implements MediaPlayer.OnComplet
         else if(op.equals(getString(R.string.player_service_op_get_volume)))
             onGetCurrentVolume();
         else if(op.equals(getString(R.string.player_service_op_set_playlist)))
-            onSetPlaylist((Playlist) intent.getParcelableExtra(getString(R.string.player_service_data_playlist)));
+            onSetPlaylist((Playlist) intent.getParcelableExtra(getString(R.string.player_service_data_playlist)), intent.getBooleanExtra(getString(R.string.player_service_data_no_pause), false));
         else if(op.equals(getString(R.string.player_service_op_toggle_loop)))
             onToggleLoop();
         else if(op.equals(getString(R.string.player_service_op_get_current_pos)))
@@ -87,15 +120,7 @@ public class MusicPlayerService extends Service implements MediaPlayer.OnComplet
 
         return START_STICKY;
     }
-    @Override
-    public void onDestroy() {
-        // Tell the user we stopped.
-        if (playlist != null) {
-            player.release();
-            player = null;
-            Toast.makeText(this, "Player Service Stopped", Toast.LENGTH_SHORT).show();
-        }
-    }
+
 
     @Override
     public void onCompletion(MediaPlayer mp) {
@@ -203,7 +228,7 @@ public class MusicPlayerService extends Service implements MediaPlayer.OnComplet
             }
         }
     }
-    public void onSetPlaylist(Playlist playlist) {
+    public void onSetPlaylist(Playlist playlist, boolean noPause) {
         if (playlist != null) {
             Song currentSong = playlist.getCurrentSong();
             boolean found = false;
@@ -215,7 +240,7 @@ public class MusicPlayerService extends Service implements MediaPlayer.OnComplet
                 }
             }
             this.playlist = playlist;
-            if (!found) {
+            if (!found && !noPause) {
                 tryCreate();
             }
         } else {
@@ -267,4 +292,6 @@ public class MusicPlayerService extends Service implements MediaPlayer.OnComplet
     MediaPlayer player;
     Playlist playlist;
     PlayerStatus status = PlayerStatus.Stopped;
+    MediaButtonReceiver mediaButtonReceiver;
+    MediaSession session;
 }

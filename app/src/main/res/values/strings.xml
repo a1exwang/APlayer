@@ -35,6 +35,7 @@
     <string name="player_service_op_next">PlayerServiceOpNext</string>
     <string name="player_service_op_last">PlayerServiceOpLast</string>
     <string name="player_service_op_set_playlist">PlayerServiceOpSetPlaylist</string>
+    <string name="player_service_data_no_pause">PlayerServiceDataNoPause</string>
     <string name="player_service_data_playlist">PlaylistServiceDataPlaylist</string>
     <string name="player_service_op_set_volume">PlayerServiceSetVolume</string>
     <string name="player_service_op_get_volume">PlayerServiceGetVolume</string>
@@ -56,6 +57,7 @@
     <!-- Select File Activity -->
     <string name="select_file_initial_directory">SelectFileInitialDirectory</string>
     <string name="select_file_supported_files">.*\.((mp3)|(m4a)|(wav)|(flac)|(ape)|(aac))</string>
+    <string name="select_file_current_directory">SelectFileCurrentDirectory</string>
 
     <!-- Search File Activity -->
     <string name="search_artist">SearchArtist</string>

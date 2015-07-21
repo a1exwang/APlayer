@@ -1,30 +1,14 @@
 package com.iced.alexwang.activities;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.os.Bundle;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
-import android.widget.RelativeLayout;
 
-import com.iced.alexwang.libs.CachedFile;
-import com.iced.alexwang.models.Playlist;
-import com.iced.alexwang.models.PlaylistList;
-import com.iced.alexwang.models.Song;
-import com.iced.alexwang.models.callbacks.FilesSelectedCallback;
-import com.iced.alexwang.models.callbacks.PlaylistCallback;
-import com.iced.alexwang.player.MusicPlayerHelper;
-import com.iced.alexwang.views.decorator.DividerItemDecoration;
-import com.iced.alexwang.views.playlist_list.PlaylistListAdapter;
+import com.iced.alexwang.views.main.LeftDrawerAdapter;
+import com.iced.alexwang.views.main.ViewHelper;
 import com.iced.alexwang.views.playlist_list.PlaylistListView;
-import com.iced.alexwang.views.select_file.SelectFileView;
-
-import java.util.ArrayList;
 
 
 public class ShowPlaylistsActivity extends Activity {
@@ -32,8 +16,7 @@ public class ShowPlaylistsActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_show_playlists);
-
+        setContentView(ViewHelper.getDrawerLayout(this, LayoutInflater.from(this).inflate(R.layout.activity_show_playlists, null), new LeftDrawerAdapter(this, 2)));
         llView = (PlaylistListView) findViewById(R.id.playlistListView);
     }
 

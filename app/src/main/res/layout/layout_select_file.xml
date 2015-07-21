@@ -14,8 +14,8 @@
         android:id="@+id/listSelectFile"
         android:layout_toStartOf="@+id/btnSelectFileReverse"
         android:layout_above="@+id/btnSelectFileReverse"
-        android:layout_alignEnd="@+id/btnSelectFileReverse"
-        android:layout_below="@+id/textCurrentPath">
+        android:layout_below="@+id/textCurrentPath"
+        android:layout_alignParentEnd="true">
 
     </RelativeLayout>
 
